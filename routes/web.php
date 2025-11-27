@@ -40,6 +40,10 @@ use App\Http\Controllers\Admin\SalaryStructureController; // Added missing contr
 use App\Http\Controllers\Admin\PayrollController; // Added missing controller
 use App\Http\Controllers\Admin\NotificationSettingController; // Added missing controller
 use App\Http\Controllers\Admin\MediaController; // Added the new Media Controller
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ExportController;
+use App\Http\Controllers\Central\HospitalController;
+
 
 
 // Redirect root to login page
@@ -200,8 +204,8 @@ Route::middleware('auth')->group(function () {
     Route::get('billing/{billing}/pdf', [BillingController::class, 'pdf'])->name('billing.pdf');
 
     // --- Media Upload/Delete Utility Routes ---
-    Route::post('media/upload/{model}/{id}', [MediaController::class,'upload'])->name('media.upload');
-    Route::delete('media/delete/{media}', [MediaController::class,'delete'])->name('media.delete');
+    Route::post('media/upload/{model}/{id}', [MediaController::class, 'upload'])->name('media.upload');
+    Route::delete('media/delete/{media}', [MediaController::class, 'delete'])->name('media.delete');
     // ----------------------------------------
 
     // HR + Payroll
@@ -219,10 +223,23 @@ Route::middleware('auth')->group(function () {
     Route::post('notification-settings', [NotificationSettingController::class, 'update'])->name('notification-settings.update');
 
     // Export In Word File
-    Route::get('export/patients', [ExportController::class,'exportPatientsExcel'])->name('export.patients');
+    Route::get('export/patients', [ExportController::class, 'exportPatientsExcel'])->name('export.patients');
 
     // DASHBOARD
-    Route::get('dashboard', [DashboardController::class,'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    //Create New Hospital
+    Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+        Route::resource('hospitals', HospitalController::class);
+    });
+
+    Route::domain('{hospital}.yourapp.com')->middleware('tenant')->group(function () {
+        // Tenant-specific routes go here
+        Route::get('/', function () {
+            return view('tenant.dashboard');
+        });
+    });
 
 
+    
 });

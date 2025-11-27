@@ -24,7 +24,7 @@ class DashboardController extends Controller
             'appointments_today' => Appointment::whereDate('appointment_date',$today)->count(),
             'total_patients'  => Patient::count(),
             'today_revenue'   => BillingInvoice::whereDate('created_at',$today)->sum('net_amount'),
-            'low_stock'       => Medicine::where('qty','<',10)->count(),
+            'low_stock' => Medicine::where('current_stock', '<', 10)->count(),
             'pending_lab'     => LabTestRequest::where('status','pending')->count(),
             'pending_radio'   => RadiologyRequest::where('status','pending')->count(),
         ]);

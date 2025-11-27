@@ -23,7 +23,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            UserSeeder::class, // Add this line
+            UserSeeder::class,
+            TenantDomainSeeder::class,
+            
         ]);
     }
 }

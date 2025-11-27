@@ -52,4 +52,11 @@ class Patient extends Model implements HasMedia
     {
         $this->addMediaCollection('documents')->useDisk('public');
     }
+
+    // Implement the missing getActivitylogOptions method
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()
+            ->logOnly(['full_name', 'phone', 'age', 'gender', 'address']);
+    }
 }

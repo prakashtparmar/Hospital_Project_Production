@@ -14,7 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
 
         // Register the Spatie Permission middleware aliases here:
-
         $middleware->alias([
             'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
@@ -30,8 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
         
         // Add global middleware here:
         $middleware->web(append: [
-            \App\Http\Middleware\InitializeTenancyByDomain::class,
-            \App\Http\Middleware\PreventAccessFromCentral::class,
+            \Stancl\Tenancy\Middleware\InitializeTenancyByDomain::class,
+            \Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains::class,
         ]);
         
     })

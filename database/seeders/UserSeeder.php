@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@example.com'], // Find by email
             [
                 'name' => 'System Administrator',
-                'password' => Hash::make('secureadminpassword'), // CHANGE THIS!
+                'password' => Hash::make('password'), // CHANGE THIS!
                 // REMOVED: 'role' => 'admin',  <-- This line caused your error!
             ]
         );
