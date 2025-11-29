@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             TenantDomainSeeder::class,
+            PermissionSeeder::class,
+            RolePermissionSeeder::class,
+            DummyScheduleSeeder::class,
             
         ]);
     }

@@ -1,0 +1,191 @@
+/* ---------------------------------------------------------
+   MODULE 1 — GLOBAL SYSTEM (Modernized ACE ADMIN for HMS)
+   --------------------------------------------------------- */
+
+/* ====== CSS VARIABLES ====== */
+:root {
+    /* Primary Theme Colors */
+    --primary: #2B7DBC;
+    --primary-light: #4A90D9;
+    --primary-dark: #1F5D8A;
+
+    /* Success */
+    --success: #4CAF50;
+    --success-light: #7EDC84;
+
+    /* Danger */
+    --danger: #E74C3C;
+    --danger-light: #FF9286;
+
+    /* Warning */
+    --warning: #F4B400;
+
+    /* Info */
+    --info: #5BC0DE;
+
+    /* Neutral */
+    --gray-100: #F7F9FB;
+    --gray-200: #EDF1F5;
+    --gray-300: #DCE3EA;
+    --gray-400: #C0CAD4;
+    --gray-500: #95A1B0;
+    --gray-600: #6B7785;
+    --gray-700: #4D5764;
+    --gray-800: #2F363D;
+    --gray-900: #1C1F23;
+
+    /* Typography */
+    --font-main: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+    --font-size: 14px;
+    --line-height: 1.45;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+
+    /* Borders */
+    --radius: 6px;
+    --radius-lg: 10px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 10px rgba(0,0,0,0.08);
+    --shadow-lg: 0 6px 20px rgba(0,0,0,0.14);
+
+    /* Transition */
+    --transition: 0.25s ease;
+}
+
+/* ====== GLOBAL RESET ====== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ====== BASE STYLING ====== */
+html {
+    font-size: var(--font-size);
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--gray-100);
+    color: var(--gray-900);
+    line-height: var(--line-height);
+}
+
+/* ====== LINKS ====== */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* ====== HEADINGS ====== */
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: var(--space-3);
+}
+
+/* ====== CONTAINERS ====== */
+.container {
+    width: 100%;
+    max-width: 1300px;
+    margin: auto;
+    padding: 0 var(--space-4);
+}
+
+/* ====== CARDS (MODERN WIDGET BOX) ====== */
+.card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-4);
+}
+
+.card-header {
+    font-weight: 600;
+    font-size: 16px;
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
+    border-bottom: 1px solid var(--gray-300);
+}
+
+/* ====== FORMS ====== */
+input,
+select,
+textarea {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius);
+    font-size: 14px;
+    transition: var(--transition);
+    background: #fff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(43, 125, 188, 0.15);
+}
+
+/* ====== BUTTONS ====== */
+.btn {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius);
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+/* ====== TABLES ====== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+table th,
+table td {
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--gray-200);
+}
+table th {
+    background: var(--gray-200);
+    font-weight: 600;
+}
+
+/* ====== UTILITIES ====== */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.radius { border-radius: var(--radius); }
+.radius-lg { border-radius: var(--radius-lg); }
+.mt-3 { margin-top: var(--space-3); }
+.mb-3 { margin-bottom: var(--space-3); }
+.p-3 { padding: var(--space-3); }
+

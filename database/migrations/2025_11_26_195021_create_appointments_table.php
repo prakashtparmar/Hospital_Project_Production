@@ -20,7 +20,7 @@ return new class extends Migration {
 
             $table->integer('token_no')->nullable();
 
-            $table->enum('status', ['Pending','Confirmed','Completed','Cancelled'])
+            $table->enum('status', ['Pending','CheckedIn','InConsultation','Completed','Cancelled'])
                   ->default('Pending');
 
             $table->text('reason')->nullable();

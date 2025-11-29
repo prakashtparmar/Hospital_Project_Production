@@ -8,11 +8,19 @@ use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        $departments = Department::latest()->paginate(10);
-        return view('admin.departments.index', compact('departments'));
+        $this->middleware('permission:departments.view')->only(['index', 'show']);
+        $this->middleware('permission:departments.create')->only(['create', 'store']);
+        $this->middleware('permission:departments.edit')->only(['edit', 'update']);
+        $this->middleware('permission:departments.delete')->only(['destroy']);
     }
+
+    public function index()
+{
+    $departments = Department::withTrashed()->latest()->get();
+    return view('admin.departments.index', compact('departments'));
+}
 
     public function create()
     {
@@ -23,12 +31,16 @@ class DepartmentController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:departments,name',
-            'code' => 'nullable|max:10'
+            'code' => 'nullable|max:10',
+            'status' => 'required',
+            'description' => 'nullable'
         ]);
 
         Department::create($request->all());
 
-        return redirect()->route('departments.index')->with('success', 'Department created successfully.');
+        return redirect()
+            ->route('departments.index')
+            ->with('success', 'Department created successfully.');
     }
 
     public function edit(Department $department)
@@ -40,12 +52,16 @@ class DepartmentController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:departments,name,' . $department->id,
-            'code' => 'nullable|max:10'
+            'code' => 'nullable|max:10',
+            'status' => 'required',
+            'description' => 'nullable'
         ]);
 
         $department->update($request->all());
 
-        return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
+        return redirect()
+            ->route('departments.index')
+            ->with('success', 'Department updated successfully.');
     }
 
     public function destroy(Department $department)
@@ -53,4 +69,22 @@ class DepartmentController extends Controller
         $department->delete();
         return back()->with('success', 'Department deleted.');
     }
+
+    public function restore($id)
+    {
+        $department = Department::withTrashed()->findOrFail($id);
+        $department->restore();
+
+        return back()->with('success', 'Department restored successfully.');
+    }
+
+    public function forceDelete($id)
+    {
+        $department = Department::withTrashed()->findOrFail($id);
+        $department->forceDelete();
+
+        return back()->with('success', 'Department permanently deleted.');
+    }
+
+
 }

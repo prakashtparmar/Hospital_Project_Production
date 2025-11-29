@@ -1,112 +1,175 @@
-@extends('layouts.auth')
+@extends('layouts.app')
+
+@section('breadcrumbs')
+<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+    <ul class="breadcrumb">
+        <li>
+            <i class="ace-icon fa fa-home home-icon"></i>
+            <a href="{{ route('dashboard') }}">Dashboard</a>
+        </li>
+        <li>
+            <a href="{{ route('opd.index') }}">OPD Visits</a>
+        </li>
+        <li class="active">Add OPD Visit</li>
+    </ul>
+</div>
+@endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h4>Add OPD Visit</h4>
-        </div>
 
-        <div class="card-body">
-            <form method="POST" action="{{ route('opd.store') }}">
-                @csrf
+<div class="page-header">
+    <h4 class="page-title">
+        <i class="ace-icon fa fa-plus"></i> Add OPD Visit
+    </h4>
+</div>
 
-                <div class="row">
+{{-- Validation Errors --}}
+@if ($errors->any())
+<div class="alert alert-danger alert-dismissible fade in">
+    <button class="close" data-dismiss="alert">&times;</button>
+    <strong><i class="ace-icon fa fa-warning"></i> Errors found:</strong>
+    <ul class="mt-2 mb-0">
+        @foreach ($errors->all() as $error)
+            <li>• {{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 
-                    <div class="col-md-4 mb-3">
-                        <label>Patient</label>
-                        <select name="patient_id" class="form-control" required>
-                            @foreach ($patients as $p)
-                                <option value="{{ $p->id }}">
-                                    {{ $p->patient_id }} - {{ $p->full_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+<div class="row">
+    <div class="col-xs-12">
 
-                    <div class="col-md-4 mb-3">
-                        <label>Department</label>
-                        <select name="department_id" class="form-control">
-                            <option value="">-- select --</option>
-                            @foreach ($departments as $d)
-                                <option value="{{ $d->id }}">{{ $d->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+        <div class="widget-box">
+            <div class="widget-header">
+                <h5 class="widget-title"><i class="fa fa-hospital-o"></i> OPD Visit Details</h5>
+            </div>
 
-                    <!-- <div class="col-md-4 mb-3">
-                        <label>Doctor</label>
-                        <select name="doctor_id" class="form-control">
-                            <option value="">-- select --</option>
-                            @foreach ($doctors as $dr)
-                                <option value="{{ $dr->id }}">{{ $dr->name }}</option>
-                            @endforeach
-                        </select>
-                    </div> -->
+            <div class="widget-body">
+                <div class="widget-main">
 
-                    @php
-                        $today = \Carbon\Carbon::now()->format('l'); // e.g., Monday
-                        $availableDoctors = \App\Models\DoctorSchedule::where('day', $today)
-                            ->where('status', 1)
-                            ->pluck('doctor_id');
-                        $doctors = \App\Models\User::whereIn('id', $availableDoctors)->get();
-                    @endphp
+                    @can('opd.create')
+                    <form method="POST" action="{{ route('opd.store') }}">
+                        @csrf
 
-                    <select name="doctor_id" class="form-control">
-                        <option value="">-- select --</option>
-                        @foreach($doctors as $dr)
-                            <option value="{{ $dr->id }}">{{ $dr->name }} (Available Today)</option>
-                        @endforeach
-                    </select>
+                        <div class="row">
 
+                            {{-- PATIENT --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Patient *</strong></label>
+                                <select name="patient_id" class="form-control" required>
+                                    @foreach ($patients as $p)
+                                        <option value="{{ $p->id }}">
+                                            {{ $p->patient_id }} - {{ $p->full_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                    <div class="col-md-4 mb-3">
-                        <label>Visit Date</label>
-                        <input type="date" name="visit_date" class="form-control" required>
-                    </div>
+                            {{-- DEPARTMENT --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Department</strong></label>
+                                <select name="department_id" class="form-control">
+                                    <option value="">-- Select --</option>
+                                    @foreach ($departments as $d)
+                                        <option value="{{ $d->id }}">{{ $d->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                    <div class="col-md-4 mb-3">
-                        <label>BP</label>
-                        <input name="bp" class="form-control">
-                    </div>
+                            {{-- DOCTOR --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Doctor</strong></label>
+                                <select name="doctor_id" class="form-control">
+                                    <option value="">-- Select --</option>
+                                    @foreach ($doctors as $dr)
+    <option value="{{ $dr->id }}">
+        {{ $dr->name }} (Available Today)
+    </option>
+@endforeach
 
-                    <div class="col-md-4 mb-3">
-                        <label>Temperature</label>
-                        <input name="temperature" class="form-control">
-                    </div>
+                                </select>
+                            </div>
 
-                    <div class="col-md-4 mb-3">
-                        <label>Pulse</label>
-                        <input name="pulse" class="form-control">
-                    </div>
+                            {{-- VISIT DATE --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Visit Date *</strong></label>
+                                <input type="date"
+                                       name="visit_date"
+                                       class="form-control"
+                                       required>
+                            </div>
 
-                    <div class="col-md-4 mb-3">
-                        <label>Weight</label>
-                        <input name="weight" class="form-control">
-                    </div>
+                            {{-- BP --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Blood Pressure (BP)</strong></label>
+                                <input name="bp" class="form-control">
+                            </div>
 
-                    <div class="col-md-12 mb-3">
-                        <label>Symptoms</label>
-                        <textarea name="symptoms" class="form-control"></textarea>
-                    </div>
+                            {{-- Temperature --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Temperature</strong></label>
+                                <input name="temperature" class="form-control">
+                            </div>
 
-                    <div class="col-md-12 mb-3">
-                        <label>Diagnosis</label>
-                        <textarea name="diagnosis" class="form-control"></textarea>
-                    </div>
+                            {{-- Pulse --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Pulse</strong></label>
+                                <input name="pulse" class="form-control">
+                            </div>
 
-                    <div class="col-md-4 mb-3">
-                        <label>Status</label>
-                        <select name="status" class="form-control">
-                            <option value="1">Active</option>
-                            <option value="0">Closed</option>
-                        </select>
-                    </div>
+                            {{-- Weight --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Weight</strong></label>
+                                <input name="weight" class="form-control">
+                            </div>
+
+                            {{-- Symptoms --}}
+                            <div class="col-md-12 mb-3">
+                                <label><strong>Symptoms</strong></label>
+                                <textarea name="symptoms" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            {{-- Diagnosis --}}
+                            <div class="col-md-12 mb-3">
+                                <label><strong>Diagnosis</strong></label>
+                                <textarea name="diagnosis" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            {{-- Status --}}
+                            <div class="col-md-4 mb-3">
+                                <label><strong>Status</strong></label>
+                                <select name="status" class="form-control">
+                                    <option value="1">Active</option>
+                                    <option value="0">Closed</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="text-right mt-3">
+                            <a href="{{ route('opd.index') }}" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Back
+                            </a>
+
+                            <button class="btn btn-success">
+                                <i class="fa fa-save"></i> Save OPD Visit
+                            </button>
+                        </div>
+
+                    </form>
+                    @endcan
+
+                    @cannot('opd.create')
+                        <div class="alert alert-warning">
+                            <i class="fa fa-lock"></i> You do not have permission to create OPD visits.
+                        </div>
+                    @endcannot
 
                 </div>
-
-                <button class="btn btn-success">Save</button>
-
-            </form>
+            </div>
         </div>
+
     </div>
+</div>
+
 @endsection

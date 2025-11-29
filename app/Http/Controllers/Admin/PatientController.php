@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:patients.view')->only(['index', 'show']);
+        $this->middleware('permission:patients.create')->only(['create', 'store']);
+        $this->middleware('permission:patients.edit')->only(['edit', 'update']);
+        $this->middleware('permission:patients.delete')->only(['destroy']);
+    }
     private function generatePatientId()
     {
         $last = Patient::latest()->first();

@@ -8,35 +8,169 @@ use Spatie\Permission\Models\Permission;
 
 class RolePermissionSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        // Permissions (you can expand later)
+        // -------------------------
+        // Permissions list
+        // -------------------------
         $permissions = [
-            'user.manage',
-            'patient.create',
-            'patient.view',
-            'patient.update',
-            'patient.delete',
-            'appointment.manage',
-            'billing.manage',
-            'inventory.manage',
-            'reports.view',
+
+            // Dashboard
+            'dashboard.view',
+
+            // Users & Roles
+            'users.view','users.create','users.edit','users.delete',
+            'roles.view','roles.create','roles.edit','roles.delete',
+
+            // Departments
+            'departments.view','departments.create','departments.edit','departments.delete',
+
+            // Doctors
+            'doctors.view','doctors.create','doctors.edit','doctors.delete',
+
+            // Patients
+            'patients.view','patients.create','patients.edit','patients.delete',
+
+            // OPD
+            'opd.view','opd.create','opd.edit','opd.delete',
+
+            // IPD
+            'ipd.view','ipd.create','ipd.edit','ipd.delete','ipd.discharge',
+
+            // Appointments
+            'appointments.view','appointments.create','appointments.edit','appointments.delete',
+
+            // Doctor Schedule
+            'doctor-schedule.view','doctor-schedule.create','doctor-schedule.edit','doctor-schedule.delete',
+
+            // Pharmacy
+            'medicines.view','medicines.create','medicines.edit','medicines.delete',
+            'issue-medicines.view','issue-medicines.create',
+
+            // Inventory
+            'purchases.view','purchases.create','purchases.edit','purchases.delete',
+            'suppliers.view','suppliers.create','suppliers.edit','suppliers.delete',
+            'stock-adjustments.view','stock-adjustments.create',
+
+            // Lab
+            'lab.manage','lab.requests','lab.collect','lab.results',
+
+            // Radiology
+            'radiology.manage','radiology.requests','radiology.reports',
+
+            // Billing
+            'billing.manage','billing.view',
+
+            // HR
+            'hr.manage',
+
+            // Export
+            'export',
+
+            // Settings
+            'settings.manage',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
+        // -------------------------
         // Roles
-        $admin = Role::firstOrCreate(['name' => 'Admin']);
-        $doctor = Role::firstOrCreate(['name' => 'Doctor']);
-        $nurse = Role::firstOrCreate(['name' => 'Nurse']);
-        $receptionist = Role::firstOrCreate(['name' => 'Receptionist']);
+        // -------------------------
 
-        // Assign permissions
-        $admin->givePermissionTo(Permission::all());
-        $doctor->givePermissionTo(['patient.view', 'patient.update', 'appointment.manage']);
-        $nurse->givePermissionTo(['patient.view']);
-        $receptionist->givePermissionTo(['patient.create', 'patient.view', 'appointment.manage']);
+        $roles = [
+            'Master Admin',
+            'Admin',
+            'Doctor',
+            'Nurse',
+            'Receptionist',
+            'Accountant',
+            'Pharmacist',
+            'Lab Technician',
+            'Radiology Technician',
+            'Store Manager',
+            'IPD Manager',
+            'HR Manager',
+        ];
+
+        foreach ($roles as $roleName) {
+            Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+        }
+
+        // -------------------------
+        // Assign permissions to roles
+        // -------------------------
+
+        // Master Admin gets all
+        Role::findByName('Master Admin')->givePermissionTo(Permission::all());
+
+
+        // Admin
+        Role::findByName('Admin')->givePermissionTo([
+            'dashboard.view',
+            'users.view','users.create','users.edit',
+            'departments.view','departments.create','departments.edit',
+            'billing.view',
+        ]);
+
+        // Doctor
+        Role::findByName('Doctor')->givePermissionTo([
+            'patients.view',
+            'opd.view','opd.create','opd.edit',
+            'lab.requests','lab.results',
+            'radiology.requests','radiology.reports',
+        ]);
+
+        // Nurse
+        Role::findByName('Nurse')->givePermissionTo([
+            'patients.view',
+            'ipd.view','ipd.edit',
+        ]);
+
+        // Receptionist
+        Role::findByName('Receptionist')->givePermissionTo([
+            'patients.view','patients.create',
+            'opd.create',
+            'appointments.view','appointments.create',
+        ]);
+
+        // Accountant
+        Role::findByName('Accountant')->givePermissionTo([
+            'billing.manage',
+        ]);
+
+        // Pharmacist
+        Role::findByName('Pharmacist')->givePermissionTo([
+            'medicines.view',
+            'issue-medicines.view','issue-medicines.create',
+        ]);
+
+        // Lab Technician
+        Role::findByName('Lab Technician')->givePermissionTo([
+            'lab.requests','lab.collect','lab.results',
+        ]);
+
+        // Radiology Technician
+        Role::findByName('Radiology Technician')->givePermissionTo([
+            'radiology.requests','radiology.reports',
+        ]);
+
+        // Store Manager
+        Role::findByName('Store Manager')->givePermissionTo([
+            'purchases.view','purchases.create',
+            'suppliers.view','suppliers.create',
+            'stock-adjustments.view',
+        ]);
+
+        // IPD Manager
+        Role::findByName('IPD Manager')->givePermissionTo([
+            'ipd.view','ipd.edit','ipd.discharge',
+        ]);
+
+        // HR Manager
+        Role::findByName('HR Manager')->givePermissionTo([
+            'hr.manage',
+        ]);
     }
 }

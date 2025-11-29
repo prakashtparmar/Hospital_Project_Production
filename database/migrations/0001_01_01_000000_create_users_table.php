@@ -13,10 +13,31 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
+            // Existing fields
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // -------------------------------------------
+            // NEW FIELDS (Added, nothing modified/removed)
+            // -------------------------------------------
+            $table->string('mobile')->nullable();
+            $table->string('user_code')->nullable();
+            $table->string('user_type')->nullable();
+            $table->boolean('is_active')->default(1);
+            // $table->string('status')->default('Active');
+
+            $table->string('gender')->nullable();
+            $table->string('marital_status')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->date('joining_date')->nullable();
+            $table->string('emergency_contact_no')->nullable();
+            $table->text('address')->nullable();
+            $table->string('image')->nullable(); // profile image path
+            // -------------------------------------------
+
             $table->rememberToken();
             $table->timestamps();
         });

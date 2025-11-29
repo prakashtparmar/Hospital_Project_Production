@@ -1,32 +1,119 @@
-@extends('layouts.auth')
+@extends('layouts.app')
+
+@section('breadcrumbs')
+<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+    <ul class="breadcrumb">
+        <li>
+            <i class="ace-icon fa fa-home home-icon"></i>
+            <a href="{{ route('dashboard') }}">Dashboard</a>
+        </li>
+        <li>
+            <a href="{{ route('opd.index') }}">OPD Visits</a>
+        </li>
+        <li class="active">OPD Details</li>
+    </ul>
+</div>
+@endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header"><h4>OPD Visit Details</h4></div>
 
-    <div class="card-body">
+<div class="page-header">
+    <h4 class="page-title">
+        <i class="fa fa-eye"></i> OPD Visit Details
+    </h4>
+</div>
 
-        <p><strong>OPD No:</strong> {{ $opd->opd_no }}</p>
-        <p><strong>Patient:</strong> {{ $opd->patient->full_name }}</p>
-        <p><strong>Doctor:</strong> {{ $opd->doctor->name ?? '-' }}</p>
-        <p><strong>Department:</strong> {{ $opd->department->name ?? '-' }}</p>
-        <p><strong>Visit Date:</strong> {{ $opd->visit_date }}</p>
+<div class="row">
+    <div class="col-xs-12">
 
-        <hr>
+        <div class="widget-box">
+            <div class="widget-header">
+                <h5 class="widget-title"><i class="fa fa-hospital-o"></i> OPD Information</h5>
+            </div>
 
-        <p><strong>Symptoms:</strong><br>{{ $opd->symptoms }}</p>
-        <p><strong>Diagnosis:</strong><br>{{ $opd->diagnosis }}</p>
+            <div class="widget-body">
+                <div class="widget-main">
 
-        <hr>
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <th width="200">OPD Number</th>
+                            <td>{{ $opd->opd_no }}</td>
+                        </tr>
 
-        <h5>Vitals</h5>
-        <p><strong>BP:</strong> {{ $opd->bp }}</p>
-        <p><strong>Temperature:</strong> {{ $opd->temperature }}</p>
-        <p><strong>Pulse:</strong> {{ $opd->pulse }}</p>
-        <p><strong>Weight:</strong> {{ $opd->weight }}</p>
+                        <tr>
+                            <th>Patient</th>
+                            <td>{{ $opd->patient->full_name }}</td>
+                        </tr>
 
-        <a href="{{ route('opd.index') }}" class="btn btn-secondary">Back</a>
+                        <tr>
+                            <th>Doctor</th>
+                            <td>{{ $opd->doctor->name ?? '—' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Department</th>
+                            <td>{{ $opd->department->name ?? '—' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Visit Date</th>
+                            <td>{{ \Carbon\Carbon::parse($opd->visit_date)->format('d M, Y') }}</td>
+                        </tr>
+                    </table>
+
+                    <hr>
+
+                    <h4><i class="fa fa-file-text"></i> Clinical Information</h4>
+
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="200">Symptoms</th>
+                            <td>{!! nl2br(e($opd->symptoms)) !!}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Diagnosis</th>
+                            <td>{!! nl2br(e($opd->diagnosis)) !!}</td>
+                        </tr>
+                    </table>
+
+                    <hr>
+
+                    <h4><i class="fa fa-heartbeat"></i> Vitals</h4>
+
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="200">Blood Pressure (BP)</th>
+                            <td>{{ $opd->bp ?: '—' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Temperature</th>
+                            <td>{{ $opd->temperature ?: '—' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Pulse</th>
+                            <td>{{ $opd->pulse ?: '—' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Weight</th>
+                            <td>{{ $opd->weight ?: '—' }}</td>
+                        </tr>
+                    </table>
+
+                    <div class="text-right mt-3">
+                        <a href="{{ route('opd.index') }}" class="btn btn-default">
+                            <i class="fa fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
+
 @endsection
