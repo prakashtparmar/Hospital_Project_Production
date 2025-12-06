@@ -24,23 +24,28 @@ class IssueMedicineController extends Controller
     }
 
     public function create()
-    {
-        return view('admin.pharmacy.issue.create', [
-            'patients'  => Patient::all(),
-            'doctors'   => User::role('Doctor')->get(),
-            'medicines' => Medicine::all()
-        ]);
-    }
+{
+    return view('admin.pharmacy.issue.create', [
+        'patients'  => Patient::all(),
+        'doctors'   => User::role('Doctor')->get(),
+
+        // ✅ status = 1 → ACTIVE medicines only
+        'medicines' => Medicine::where('status', 1)->get(),
+    ]);
+}
+
+
 
     public function store(Request $request, StockService $stock)
     {
         $request->validate([
-            'patient_id'    => 'required',
-            'issue_date'    => 'required|date',
-            'medicine_id.*' => 'required',
-            'quantity.*'    => 'required|numeric|min:1',
-            'rate.*'        => 'required|numeric|min:0'
-        ]);
+    'patient_id'    => 'required',
+    'issue_date'    => 'required|date',
+    'medicine_id.*' => 'required|exists:medicines,id,status,1',
+    'quantity.*'    => 'required|numeric|min:1',
+    'rate.*'        => 'required|numeric|min:0',
+]);
+
 
         $issue = IssueMedicine::create([
             'patient_id'   => $request->patient_id,

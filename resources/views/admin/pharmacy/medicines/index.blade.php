@@ -22,14 +22,6 @@
     </a>
 </div>
 
-{{-- SUCCESS --}}
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade in">
-    <button class="close" data-dismiss="alert">&times;</button>
-    <i class="ace-icon fa fa-check"></i> {{ session('success') }}
-</div>
-@endif
-
 {{-- SEARCH --}}
 <form method="GET" class="mb-3" style="max-width:450px;">
     <div class="input-group">
