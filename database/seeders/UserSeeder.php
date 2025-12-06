@@ -23,56 +23,127 @@ class UserSeeder extends Seeder
             'dashboard.view',
 
             // User & System
-            'roles.view','roles.create','roles.edit','roles.delete',
-            'users.view','users.create','users.edit','users.delete',
-            'departments.view','departments.create','departments.edit','departments.delete',
+            'roles.view',
+            'roles.create',
+            'roles.edit',
+            'roles.delete',
+            'users.view',
+            'users.create',
+            'users.edit',
+            'users.delete',
+            'departments.view',
+            'departments.create',
+            'departments.edit',
+            'departments.delete',
             'auditlogs.view',
-            'notification-settings.view','notification-settings.edit',
+            'notification-settings.view',
+            'notification-settings.edit',
 
             // Doctors
-'doctors.view','doctors.create','doctors.edit','doctors.delete',
+            'doctors.view',
+            'doctors.create',
+            'doctors.edit',
+            'doctors.delete',
 
-// Consultations (FULL LIST)
-'consultations.view',
-'consultations.create',
-'consultations.edit',
-'consultations.end',
+            // Consultations (FULL LIST)
+            'consultations.view',
+            'consultations.create',
+            'consultations.edit',
+            'consultations.end',
 
 
 
             // Clinical Care
-            'patients.view','patients.create','patients.edit','patients.delete',
-            'opd.view','opd.create','opd.edit','opd.delete',
-            'ipd.view','ipd.create','ipd.edit','ipd.delete','ipd.discharge',
-            'appointments.view','appointments.create','appointments.edit','appointments.delete',
-            'doctor-schedule.view','doctor-schedule.create','doctor-schedule.edit','doctor-schedule.delete',
+            'patients.view',
+            'patients.create',
+            'patients.edit',
+            'patients.delete',
+            'opd.view',
+            'opd.create',
+            'opd.edit',
+            'opd.delete',
+            'ipd.view',
+            'ipd.create',
+            'ipd.edit',
+            'ipd.delete',
+            'ipd.discharge',
+            'appointments.view',
+            'appointments.create',
+            'appointments.edit',
+            'appointments.delete',
+            'doctor-schedule.view',
+            'doctor-schedule.create',
+            'doctor-schedule.edit',
+            'doctor-schedule.delete',
 
             // Ward & Room
-            'wards.view','wards.create','wards.edit','wards.delete',
-            'rooms.view','rooms.create','rooms.edit','rooms.delete',
-            'beds.view','beds.create','beds.edit','beds.delete',
+            'wards.view',
+            'wards.create',
+            'wards.edit',
+            'wards.delete',
+            'rooms.view',
+            'rooms.create',
+            'rooms.edit',
+            'rooms.delete',
+            'beds.view',
+            'beds.create',
+            'beds.edit',
+            'beds.delete',
 
             // Pharmacy & Inventory
-            'medicine-categories.view','medicine-categories.create','medicine-categories.edit','medicine-categories.delete',
-            'medicine-units.view','medicine-units.create','medicine-units.edit','medicine-units.delete',
-            'medicines.view','medicines.create','medicines.edit','medicines.delete',
-            'stock-adjustments.view','stock-adjustments.create',
-            'suppliers.view','suppliers.create','suppliers.edit','suppliers.delete',
-            'purchases.view','purchases.create','purchases.edit','purchases.delete',
-            'issue-medicines.view','issue-medicines.create',
+            'medicine-categories.view',
+            'medicine-categories.create',
+            'medicine-categories.edit',
+            'medicine-categories.delete',
+            'medicine-units.view',
+            'medicine-units.create',
+            'medicine-units.edit',
+            'medicine-units.delete',
+            'medicines.view',
+            'medicines.create',
+            'medicines.edit',
+            'medicines.delete',
+            'stock-adjustments.view',
+            'stock-adjustments.create',
+            'suppliers.view',
+            'suppliers.create',
+            'suppliers.edit',
+            'suppliers.delete',
+            'purchases.view',
+            'purchases.create',
+            'purchases.edit',
+            'purchases.delete',
+            'issue-medicines.view',
+            'issue-medicines.create',
 
             // Laboratory
-            'lab-test-categories.view','lab-test-categories.create','lab-test-categories.edit','lab-test-categories.delete',
-            'lab-tests.view','lab-tests.create','lab-tests.edit','lab-tests.delete',
-            'lab.requests','lab.collect','lab.results',
+            'lab-test-categories.view',
+            'lab-test-categories.create',
+            'lab-test-categories.edit',
+            'lab-test-categories.delete',
+            'lab-tests.view',
+            'lab-tests.create',
+            'lab-tests.edit',
+            'lab-tests.delete',
+            'lab.requests',
+            'lab.collect',
+            'lab.results',
 
             // Radiology
-            'radiology-categories.view','radiology-categories.create','radiology-categories.edit','radiology-categories.delete',
-            'radiology-tests.view','radiology-tests.create','radiology-tests.edit','radiology-tests.delete',
-            'radiology.requests','radiology.reports',
+            'radiology-categories.view',
+            'radiology-categories.create',
+            'radiology-categories.edit',
+            'radiology-categories.delete',
+            'radiology-tests.view',
+            'radiology-tests.create',
+            'radiology-tests.edit',
+            'radiology-tests.delete',
+            'radiology.requests',
+            'radiology.reports',
 
             // Billing
-            'billing.manage','billing.view',
+            'billing.manage',
+            'billing.view',
 
             // HR & Payroll
             'hr.manage',
@@ -81,7 +152,10 @@ class UserSeeder extends Seeder
             'export.view',
 
             // Multi-Hospital
-            'hospitals.view','hospitals.create','hospitals.edit','hospitals.delete',
+            'hospitals.view',
+            'hospitals.create',
+            'hospitals.edit',
+            'hospitals.delete',
         ];
 
         foreach ($permissions as $perm) {
@@ -126,30 +200,41 @@ class UserSeeder extends Seeder
         // Admin
         Role::findByName('Admin')->givePermissionTo([
             'dashboard.view',
-            'users.view','users.create','users.edit',
-            'departments.view','departments.create','departments.edit',
+            'users.view',
+            'users.create',
+            'users.edit',
+            'departments.view',
+            'departments.create',
+            'departments.edit',
             'billing.view',
         ]);
 
         // Doctor
         Role::findByName('Doctor')->givePermissionTo([
             'patients.view',
-            'opd.view','opd.create','opd.edit',
-            'lab.requests','lab.results',
-            'radiology.requests','radiology.reports',
+            'opd.view',
+            'opd.create',
+            'opd.edit',
+            'lab.requests',
+            'lab.results',
+            'radiology.requests',
+            'radiology.reports',
         ]);
 
         // Nurse
         Role::findByName('Nurse')->givePermissionTo([
             'patients.view',
-            'ipd.view','ipd.edit',
+            'ipd.view',
+            'ipd.edit',
         ]);
 
         // Receptionist
         Role::findByName('Receptionist')->givePermissionTo([
-            'patients.view','patients.create',
+            'patients.view',
+            'patients.create',
             'opd.create',
-            'appointments.view','appointments.create',
+            'appointments.view',
+            'appointments.create',
         ]);
 
         // Accountant
@@ -160,29 +245,37 @@ class UserSeeder extends Seeder
         // Pharmacist
         Role::findByName('Pharmacist')->givePermissionTo([
             'medicines.view',
-            'issue-medicines.view','issue-medicines.create',
+            'issue-medicines.view',
+            'issue-medicines.create',
         ]);
 
         // Lab Technician
         Role::findByName('Lab Technician')->givePermissionTo([
-            'lab.requests','lab.collect','lab.results',
+            'lab.requests',
+            'lab.collect',
+            'lab.results',
         ]);
 
         // Radiology Technician
         Role::findByName('Radiology Technician')->givePermissionTo([
-            'radiology.requests','radiology.reports',
+            'radiology.requests',
+            'radiology.reports',
         ]);
 
         // Store Manager
         Role::findByName('Store Manager')->givePermissionTo([
-            'purchases.view','purchases.create',
-            'suppliers.view','suppliers.create',
+            'purchases.view',
+            'purchases.create',
+            'suppliers.view',
+            'suppliers.create',
             'stock-adjustments.view',
         ]);
 
         // IPD Manager
         Role::findByName('IPD Manager')->givePermissionTo([
-            'ipd.view','ipd.edit','ipd.discharge',
+            'ipd.view',
+            'ipd.edit',
+            'ipd.discharge',
         ]);
 
         // HR Manager
