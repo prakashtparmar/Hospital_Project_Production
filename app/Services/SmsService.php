@@ -9,19 +9,35 @@ class SmsService
 {
     public function send($mobile, $message)
     {
+        // ✅ fetch settings safely
         $setting = NotificationSetting::first();
 
-        if (!$setting->sms_gateway_url) {
+        // ✅ NO SETTINGS → exit safely
+        if (!$setting) {
             return false;
         }
 
-        $response = Http::get($setting->sms_gateway_url, [
-            'apikey' => $setting->sms_api_key,
-            'sender' => $setting->sms_sender_id,
-            'numbers' => $mobile,
-            'message' => $message
-        ]);
+        // ✅ SMS not configured → exit safely
+        if (
+            empty($setting->sms_gateway_url) ||
+            empty($setting->sms_api_key) ||
+            empty($setting->sms_sender_id)
+        ) {
+            return false;
+        }
 
-        return $response->body();
+        // ✅ send SMS
+        try {
+            $response = Http::get($setting->sms_gateway_url, [
+                'apikey'  => $setting->sms_api_key,
+                'sender'  => $setting->sms_sender_id,
+                'numbers' => $mobile,
+                'message' => $message,
+            ]);
+
+            return $response->body();
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

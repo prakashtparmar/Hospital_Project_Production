@@ -5,59 +5,76 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\LabTestRequest;
 use App\Models\LabTestResult;
-use App\Models\NotificationTemplate; // Added use statement
-use App\Services\SmsService; // Added use statement
-use App\Mail\GenericNotificationMail; // Added use statement
-use Illuminate\Support\Facades\Mail; // Added use statement
+use App\Models\NotificationTemplate;
+use App\Services\SmsService;
+use App\Mail\GenericNotificationMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class LabResultController extends Controller
 {
     public function edit(LabTestRequest $lab_request)
-    {
-        return view('admin.lab.results.edit', compact('lab_request'));
-    }
+{
+    $lab_request->load([
+        'patient',
+        'items.test.parameters',
+        'results'
+    ]);
+
+    return view('admin.lab.results.edit', compact('lab_request'));
+}
+
 
     public function update(Request $request, LabTestRequest $lab_request)
     {
-        // save result...
+        // ✅ Save results
         foreach ($request->parameter_id as $i => $pid) {
             LabTestResult::updateOrCreate(
-                ['request_id' => $lab_request->id, 'parameter_id' => $pid],
-                ['value' => $request->value[$i]]
+                [
+                    'request_id'   => $lab_request->id,
+                    'parameter_id' => $pid
+                ],
+                [
+                    'value' => $request->value[$i] ?? null
+                ]
             );
         }
 
-        $lab_request->update(['status' => 'Completed']);
+        // ✅ Mark request completed
+        $lab_request->update([
+            'status' => 'Completed'
+        ]);
 
-        // get template
-        $tpl = NotificationTemplate::where('key','lab_result_ready')->first();
+        // ✅ Notification template (safe)
+        $tpl = NotificationTemplate::where('key', 'lab_result_ready')->first();
 
-        // Email
-        if ($lab_request->patient->email) {
+        // ✅ Email (safe)
+        if ($tpl && $lab_request->patient && $lab_request->patient->email) {
             Mail::to($lab_request->patient->email)->send(
                 new GenericNotificationMail(
-                    $tpl->title,
-                    $tpl->email_body
+                    $tpl->title ?? 'Lab Result Ready',
+                    $tpl->email_body ?? ''
                 )
             );
         }
 
-        // SMS
-        if ($lab_request->patient->phone) {
+        // ✅ SMS (safe)
+        if ($tpl && $lab_request->patient && $lab_request->patient->phone) {
             (new SmsService)->send(
                 $lab_request->patient->phone,
-                $tpl->sms_body
+                $tpl->sms_body ?? ''
             );
         }
 
-        return back()->with('success','Results saved & notifications sent.');
+        // ✅ ✅ REDIRECT TO INDEX PAGE (THIS IS THE FIX)
+        return redirect()
+            ->route('lab-requests.index')
+            ->with('success', 'Results saved & notifications sent.');
     }
 
     public function pdf(LabTestRequest $lab_request)
     {
         $pdf = \PDF::loadView('admin.lab.results.pdf', compact('lab_request'));
-        return $pdf->download('lab-report-'.$lab_request->id.'.pdf');
+        return $pdf->download('lab-report-' . $lab_request->id . '.pdf');
     }
-
 }

@@ -242,35 +242,77 @@
         @endcanany
 
         {{-- LAB --}}
-        @canany(['lab-test-categories.view','lab-tests.view','lab-requests.view'])
-        <li class="{{ request()->is('lab-test-categories*','lab-tests*','lab-requests*') ? 'open' : '' }}">
-            <a href="#" class="dropdown-toggle">
-                <i class="menu-icon fa fa-flask"></i>
-                <span class="menu-text"> Lab </span>
-                <b class="arrow fa fa-angle-down"></b>
+@canany([
+    'lab-test-categories.view',
+    'lab-tests.view',
+    'lab-requests.view',
+    'lab-results.view',
+    'lab-reports.view'
+])
+<li class="{{ request()->is(
+        'lab-test-categories*',
+        'lab-tests*',
+        'lab-requests*',
+        'lab-requests/*/results*'
+    ) ? 'open' : '' }}">
+
+    <a href="#" class="dropdown-toggle">
+        <i class="menu-icon fa fa-flask"></i>
+        <span class="menu-text"> Lab </span>
+        <b class="arrow fa fa-angle-down"></b>
+    </a>
+
+    <ul class="submenu">
+
+        {{-- Categories --}}
+        @can('lab-test-categories.view')
+        <li class="{{ request()->is('lab-test-categories*') ? 'active' : '' }}">
+            <a href="{{ route('lab-test-categories.index') }}">
+                <i class="menu-icon fa fa-tags"></i> Categories
             </a>
+        </li>
+        @endcan
 
-            <ul class="submenu">
-                @can('lab-test-categories.view')
-                <li class="{{ request()->is('lab-test-categories*') ? 'active' : '' }}">
-                    <a href="{{ route('lab-test-categories.index') }}"><i class="menu-icon fa fa-tags"></i> Categories</a>
-                </li>
-                @endcan
+        {{-- Tests --}}
+        @can('lab-tests.view')
+        <li class="{{ request()->is('lab-tests*') ? 'active' : '' }}">
+            <a href="{{ route('lab-tests.index') }}">
+                <i class="menu-icon fa fa-flask"></i> Tests
+            </a>
+        </li>
+        @endcan
 
-                @can('lab-tests.view')
-                <li class="{{ request()->is('lab-tests*') ? 'active' : '' }}">
-                    <a href="{{ route('lab-tests.index') }}"><i class="menu-icon fa fa-flask"></i> Tests</a>
-                </li>
-                @endcan
+        {{-- Requests --}}
+        @can('lab-requests.view')
+        <li class="{{ request()->is('lab-requests*') ? 'active' : '' }}">
+            <a href="{{ route('lab-requests.index') }}">
+                <i class="menu-icon fa fa-file-text"></i> Requests
+            </a>
+        </li>
+        @endcan
 
-                @can('lab-requests.view')
-                <li class="{{ request()->is('lab-requests*') ? 'active' : '' }}">
-                    <a href="{{ route('lab-requests.index') }}"><i class="menu-icon fa fa-file-text"></i> Requests</a>
-                </li>
-                @endcan
-            </ul>
+        {{-- Sample Collection & Results (Lab Technician) --}}
+        @canany(['lab-samples.collect','lab-results.create','lab-results.edit'])
+        <li class="{{ request()->is('lab-requests/*/results*') ? 'active' : '' }}">
+            <a href="{{ route('lab-requests.index') }}">
+                <i class="menu-icon fa fa-eyedropper"></i> Samples / Results
+            </a>
         </li>
         @endcanany
+
+        {{-- Reports (Doctor / Admin) --}}
+        @can('lab-reports.view')
+        <li>
+            <a href="{{ route('lab-requests.index') }}">
+                <i class="menu-icon fa fa-file-pdf-o"></i> Reports
+            </a>
+        </li>
+        @endcan
+
+    </ul>
+</li>
+@endcanany
+
 
         {{-- RADIOLOGY --}}
         @canany(['radiology-categories.view','radiology-tests.view','radiology-requests.view'])

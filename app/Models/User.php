@@ -52,13 +52,13 @@ class User extends Authenticatable
         return $this->hasOne(DoctorProfile::class, 'user_id');
     }
     public function doctorSchedules()
-{
-    return $this->hasMany(DoctorSchedule::class, 'doctor_id');
-}
+    {
+        return $this->hasMany(DoctorSchedule::class, 'doctor_id');
+    }
 
-public function consultations()
-{
-    return $this->hasMany(Consultation::class, 'doctor_id');
-}
+    public function consultations()
+    {
+        return $this->hasMany(Consultation::class, 'doctor_id');
+    }
 
 }

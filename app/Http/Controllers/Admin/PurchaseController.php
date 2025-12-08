@@ -31,6 +31,14 @@ class PurchaseController extends Controller
         return view('admin.pharmacy.purchases.index', compact('purchases'));
     }
 
+    public function show(Purchase $purchase)
+{
+    $purchase->load(['supplier', 'items.medicine']);
+
+    return view('admin.pharmacy.purchases.show', compact('purchase'));
+}
+
+
     public function create()
     {
         return view('admin.pharmacy.purchases.create', [
@@ -44,32 +52,26 @@ class PurchaseController extends Controller
         $request->validate([
             'supplier_id' => 'required|integer',
             'purchase_date' => 'required|date',
-
             'medicine_id.*' => 'required|integer',
             'qty.*' => 'required|integer|min:1',
             'rate.*' => 'required|numeric|min:0',
         ]);
 
         // AUTO INCREMENT INVOICE NUMBER
-$lastInvoice = Purchase::orderBy('id', 'desc')->value('invoice_no');
-$nextInvoiceNumber = 1001; 
+        $lastInvoice = Purchase::orderBy('id', 'desc')->value('invoice_no');
+        $nextInvoiceNumber = 1001;
+        if ($lastInvoice && preg_match('/INV-(\d+)/', $lastInvoice, $m)) {
+            $nextInvoiceNumber = intval($m[1]) + 1;
+        }
+        $autoInvoice = 'INV-' . $nextInvoiceNumber;
 
-if ($lastInvoice && preg_match('/INV-(\d+)/', $lastInvoice, $m)) {
-    $nextInvoiceNumber = intval($m[1]) + 1;
-}
-
-$autoInvoice = 'INV-' . $nextInvoiceNumber;
-
-// AUTO INCREMENT GRN NUMBER
-$lastGRN = Purchase::orderBy('id', 'desc')->value('grn_no');
-$nextGRNNumber = 1001;
-
-if ($lastGRN && preg_match('/GRN-(\d+)/', $lastGRN, $m)) {
-    $nextGRNNumber = intval($m[1]) + 1;
-}
-
-$autoGRN = 'GRN-' . $nextGRNNumber;
-
+        // AUTO INCREMENT GRN NUMBER
+        $lastGRN = Purchase::orderBy('id', 'desc')->value('grn_no');
+        $nextGRNNumber = 1001;
+        if ($lastGRN && preg_match('/GRN-(\d+)/', $lastGRN, $m)) {
+            $nextGRNNumber = intval($m[1]) + 1;
+        }
+        $autoGRN = 'GRN-' . $nextGRNNumber;
 
         $purchase = Purchase::create([
             'supplier_id' => $request->supplier_id,
@@ -79,22 +81,33 @@ $autoGRN = 'GRN-' . $nextGRNNumber;
             'status' => $request->status ?? 'inapproval',
         ]);
 
+        // ✅ CALCULATE SUBTOTAL
+        $subtotal = 0;
+
         foreach ($request->medicine_id as $index => $medicine_id) {
+            $amount = $request->qty[$index] * $request->rate[$index];
+            $subtotal += $amount;
 
             PurchaseItem::create([
                 'purchase_id' => $purchase->id,
                 'medicine_id' => $medicine_id,
                 'quantity' => $request->qty[$index],
                 'rate' => $request->rate[$index],
-                'amount' => $request->qty[$index] * $request->rate[$index],
+                'amount' => $amount,
                 'batch_no' => $request->batch_no[$index] ?? null,
                 'expiry_date' => $request->expiry_date[$index] ?? null,
             ]);
         }
 
-        // -------------------------------------------------------------------------------------
+        // ✅ SAVE TOTALS
+        $purchase->update([
+            'total_amount' => $subtotal,
+            'discount_amount' => 0,
+            'tax_amount' => 0,
+            'grand_total' => $subtotal,
+        ]);
+
         // STOCK INSERT ONLY if STATUS = COMPLETED
-        // -------------------------------------------------------------------------------------
         if ($purchase->status === 'completed') {
             foreach ($purchase->items as $item) {
                 $stock->adjustStock(
@@ -135,18 +148,13 @@ $autoGRN = 'GRN-' . $nextGRNNumber;
             'status' => $request->status,
         ]);
 
-        // Load old items for reverse stock
         $purchase->load('items');
-        $oldItems = $purchase->items;
 
-        // -------------------------------------------------------------------------------------
-        // REVERSE STOCK if purchase was completed earlier
-        // -------------------------------------------------------------------------------------
         if ($wasCompleted) {
-            foreach ($oldItems as $old) {
+            foreach ($purchase->items as $old) {
                 $stock->adjustStock(
                     $old->medicine_id,
-                    -$old->quantity, // Reverse
+                    -$old->quantity,
                     'PURCHASE_REVERSAL',
                     $purchase->id,
                     $old->batch_no,
@@ -155,34 +163,34 @@ $autoGRN = 'GRN-' . $nextGRNNumber;
             }
         }
 
-        // Delete all old items
         PurchaseItem::where('purchase_id', $purchase->id)->delete();
 
-   
-        // Insert new items
-        if (!is_array($request->medicine_id) || count($request->medicine_id) == 0) {
-            return redirect()->back()->withErrors('At least one purchase item is required.');
-        }
+        // ✅ RECALCULATE TOTALS
+        $subtotal = 0;
 
         foreach ($request->medicine_id as $index => $medicine_id) {
-
+            $amount = $request->qty[$index] * $request->rate[$index];
+            $subtotal += $amount;
 
             PurchaseItem::create([
                 'purchase_id' => $purchase->id,
                 'medicine_id' => $medicine_id,
                 'quantity' => $request->qty[$index],
                 'rate' => $request->rate[$index],
-                'amount' => $request->qty[$index] * $request->rate[$index],
+                'amount' => $amount,
                 'batch_no' => $request->batch_no[$index] ?? null,
                 'expiry_date' => $request->expiry_date[$index] ?? null,
             ]);
         }
 
-        $purchase->load('items');
+        // ✅ UPDATE TOTALS
+        $purchase->update([
+            'total_amount' => $subtotal,
+            'discount_amount' => 0,
+            'tax_amount' => 0,
+            'grand_total' => $subtotal,
+        ]);
 
-        // -------------------------------------------------------------------------------------
-        // APPLY STOCK if status is now COMPLETED
-        // -------------------------------------------------------------------------------------
         if ($purchase->status === 'completed') {
             foreach ($purchase->items as $item) {
                 $stock->adjustStock(
@@ -218,29 +226,24 @@ $autoGRN = 'GRN-' . $nextGRNNumber;
     }
 
     public function destroy(Purchase $purchase)
-{
-    // Reverse stock if completed
-    if ($purchase->status === 'completed') {
-        foreach ($purchase->items as $item) {
-            app(\App\Services\StockService::class)->adjustStock(
-                $item->medicine_id,
-                -$item->quantity,
-                'PURCHASE_REVERSAL',
-                $purchase->id,
-                $item->batch_no,
-                $item->expiry_date
-            );
+    {
+        if ($purchase->status === 'completed') {
+            foreach ($purchase->items as $item) {
+                app(\App\Services\StockService::class)->adjustStock(
+                    $item->medicine_id,
+                    -$item->quantity,
+                    'PURCHASE_REVERSAL',
+                    $purchase->id,
+                    $item->batch_no,
+                    $item->expiry_date
+                );
+            }
         }
+
+        PurchaseItem::where('purchase_id', $purchase->id)->delete();
+        $purchase->delete();
+
+        return redirect()->route('purchases.index')
+            ->with('success', 'Purchase deleted successfully.');
     }
-
-    // Delete items
-    PurchaseItem::where('purchase_id', $purchase->id)->delete();
-
-    // Delete purchase
-    $purchase->delete();
-
-    return redirect()->route('purchases.index')
-        ->with('success', 'Purchase deleted successfully.');
-}
-
 }

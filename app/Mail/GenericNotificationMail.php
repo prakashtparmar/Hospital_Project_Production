@@ -10,10 +10,10 @@ class GenericNotificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subjectText;
-    public $bodyText;
+    public string $subjectText;
+    public string $bodyText;
 
-    public function __construct($subjectText, $bodyText)
+    public function __construct(string $subjectText, string $bodyText)
     {
         $this->subjectText = $subjectText;
         $this->bodyText = $bodyText;
@@ -21,10 +21,12 @@ class GenericNotificationMail extends Mailable
 
     public function build()
     {
-        return $this->subject($this->subjectText)
-                    ->view('emails.generic')
-                    ->with([
-                        'content' => $this->bodyText
-                    ]);
+        return $this
+            ->subject($this->subjectText)
+            ->view('admin.emails.generic')
+            ->with([
+                'subjectText' => $this->subjectText,
+                'content'     => $this->bodyText,
+            ]);
     }
 }

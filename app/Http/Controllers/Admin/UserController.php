@@ -10,30 +10,39 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        // Load full user data + roles + latest session info
-        $users = User::with('roles')
-            ->leftJoin('sessions', function ($join) {
-                $join->on('sessions.user_id', '=', 'users.id')
-                     ->whereRaw('sessions.last_activity = (
-                         SELECT MAX(last_activity) 
-                         FROM sessions 
-                         WHERE sessions.user_id = users.id
-                     )');
-            })
-            ->select(
-                'users.*',
-                'sessions.ip_address',
-                'sessions.user_agent',
-                'sessions.last_activity'
-            )
-            ->orderBy('users.id', 'desc')
-            ->get();
-        $roles = Role::all();
-
-        return view('admin.users.index', compact('users','roles'));
+        $this->middleware('permission:users.view')->only('index');
+        $this->middleware('permission:users.create')->only(['create','store']);
+        $this->middleware('permission:users.edit')->only(['edit','update']);
+        $this->middleware('permission:users.delete')->only('destroy');
     }
+
+    public function index()
+{
+    $users = User::with('roles')
+        ->leftJoin('sessions', function ($join) {
+            $join->on('sessions.user_id', '=', 'users.id')
+                 ->whereRaw('sessions.last_activity = (
+                     SELECT MAX(last_activity)
+                     FROM sessions
+                     WHERE sessions.user_id = users.id
+                 )');
+        })
+        ->select(
+            'users.*',
+            'sessions.ip_address',
+            'sessions.user_agent',
+            'sessions.last_activity'
+        )
+        ->orderByDesc('users.id')
+        ->get();
+
+    $roles = Role::all();
+
+    return view('admin.users.index', compact('users','roles'));
+}
+
 
     public function create()
     {
@@ -43,24 +52,20 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // VALIDATION
         $request->validate([
             'name'     => 'required',
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
 
-        // CREATE USER
         $user = User::create([
             'name'                 => $request->name,
             'email'                => $request->email,
             'password'             => Hash::make($request->password),
-
             'mobile'               => $request->mobile,
             'user_code'            => $request->user_code,
             'user_type'            => $request->user_type,
             'is_active'            => $request->is_active ?? 1,
-
             'gender'               => $request->gender,
             'marital_status'       => $request->marital_status,
             'date_of_birth'        => $request->date_of_birth,
@@ -69,55 +74,51 @@ class UserController extends Controller
             'address'              => $request->address,
         ]);
 
-        // IMAGE UPLOAD
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('users', 'public');
-            $user->update(['image' => $path]);
+            $user->update([
+                'image' => $request->file('image')->store('users', 'public')
+            ]);
         }
 
-        // ASSIGN ROLES
         if ($request->roles) {
             $user->syncRoles($request->roles);
         }
 
-        // 🔹 ACTIVITY LOG — USER CREATED
+        // ✅ SAFE ACTIVITY LOG
         activity()
             ->performedOn($user)
             ->causedBy(auth()->user())
             ->withProperties([
-                'attributes' => $request->all(),
-                'ip'         => $request->ip(),
+                'attributes' => $request->except(['password','password_confirmation']),
+                'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ])
             ->log('User created');
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return redirect()->route('users.index')
+            ->with('success', 'User created successfully.');
     }
 
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.users.edit', compact('user','roles'));
     }
 
     public function update(Request $request, User $user)
     {
-        // VALIDATION
         $request->validate([
-            'name'   => 'required',
-            'email'  => 'required|email|unique:users,email,' . $user->id,
+            'name'  => 'required',
+            'email' => 'required|email|unique:users,email,' . $user->id,
         ]);
 
-        // UPDATE USER
         $user->update([
             'name'                 => $request->name,
             'email'                => $request->email,
-
             'mobile'               => $request->mobile,
             'user_code'            => $request->user_code,
             'user_type'            => $request->user_type,
-            'is_active'            => $request->is_active,
-
+            'is_active'            => $request->is_active ?? 0,
             'gender'               => $request->gender,
             'marital_status'       => $request->marital_status,
             'date_of_birth'        => $request->date_of_birth,
@@ -126,45 +127,44 @@ class UserController extends Controller
             'address'              => $request->address,
         ]);
 
-        // UPDATE PASSWORD IF GIVEN
         if ($request->password) {
-            $user->update(['password' => Hash::make($request->password)]);
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
         }
 
-        // UPDATE IMAGE
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('users', 'public');
-            $user->update(['image' => $path]);
+            $user->update([
+                'image' => $request->file('image')->store('users','public')
+            ]);
         }
 
-        // UPDATE ROLES
         if ($request->roles) {
             $user->syncRoles($request->roles);
         }
 
-        // 🔹 ACTIVITY LOG — USER UPDATED
         activity()
             ->performedOn($user)
             ->causedBy(auth()->user())
             ->withProperties([
-                'changed'    => $user->getChanges(),
-                'ip'         => $request->ip(),
+                'changed' => $user->getChanges(),
+                'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ])
             ->log('User updated');
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('users.index')
+            ->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
     {
-        // 🔹 ACTIVITY LOG — USER DELETED
         activity()
             ->performedOn($user)
             ->causedBy(auth()->user())
             ->withProperties([
-                'user_id'    => $user->id,
-                'ip'         => request()->ip(),
+                'user_id' => $user->id,
+                'ip' => request()->ip(),
                 'user_agent' => request()->userAgent(),
             ])
             ->log('User deleted');

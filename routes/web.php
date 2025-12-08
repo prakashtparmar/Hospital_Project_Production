@@ -208,23 +208,32 @@ Route::middleware('auth')->group(function () {
 
 
     // ==========================
-    // Radiology
-    // ==========================
-    Route::resource('radiology-categories', RadiologyCategoryController::class);
-    Route::resource('radiology-tests', RadiologyTestController::class);
-    Route::resource('radiology-requests', RadiologyRequestController::class);
+// Radiology
+// ==========================
+Route::resource('radiology-categories', RadiologyCategoryController::class);
+Route::resource('radiology-tests', RadiologyTestController::class);
+Route::resource('radiology-requests', RadiologyRequestController::class);
 
-    Route::get('radiology-requests/{radiology_request:id}/start', [RadiologyRequestController::class, 'start'])
-        ->name('radiology-requests.start');
+Route::get(
+    'radiology-requests/{radiology_request:id}/start',
+    [RadiologyRequestController::class, 'start']
+)->name('radiology-requests.start');
 
-    Route::get('radiology-requests/{radiology_request:id}/report', [RadiologyReportController::class, 'edit'])
-        ->name('radiology-reports.edit');
+Route::get(
+    'radiology-requests/{radiology_request:id}/report',
+    [RadiologyReportController::class, 'edit']
+)->name('radiology-reports.edit');
 
-    Route::post('radiology-requests/{radiology_request:id}/report', [RadiologyReportController::class, 'update'])
-        ->name('radiology-reports.update');
+Route::put( // ✅ FIX APPLIED
+    'radiology-requests/{radiology_request:id}/report',
+    [RadiologyReportController::class, 'update']
+)->name('radiology-reports.update');
 
-    Route::get('radiology-requests/{radiology_request:id}/pdf', [RadiologyReportController::class, 'pdf'])
-        ->name('radiology-reports.pdf');
+Route::get(
+    'radiology-requests/{radiology_request:id}/pdf',
+    [RadiologyReportController::class, 'pdf']
+)->name('radiology-reports.pdf');
+
 
 
     // ==========================

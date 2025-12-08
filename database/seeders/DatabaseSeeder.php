@@ -37,6 +37,8 @@ class DatabaseSeeder extends Seeder
             MedicineSeeder::class,
             SupplierSeeder::class,
             PurchaseSeeder::class,
+            LabModuleSeeder::class,
+            NotificationTemplateSeeder::class,
 
 
 

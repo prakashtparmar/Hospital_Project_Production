@@ -17,10 +17,10 @@ class DepartmentController extends Controller
     }
 
     public function index()
-{
-    $departments = Department::withTrashed()->latest()->get();
-    return view('admin.departments.index', compact('departments'));
-}
+    {
+        $departments = Department::withTrashed()->latest()->get();
+        return view('admin.departments.index', compact('departments'));
+    }
 
     public function create()
     {
@@ -30,13 +30,20 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:departments,name',
-            'code' => 'nullable|max:10',
-            'status' => 'required',
-            'description' => 'nullable'
+            'name'        => 'required|unique:departments,name',
+            'code'        => 'nullable|max:10|regex:/^[A-Z0-9\-]+$/|unique:departments,code',
+            'status'      => 'required|in:0,1',
+            'description' => 'nullable',
         ]);
 
-        Department::create($request->all());
+        $code = $request->code ?: $this->generateDepartmentCode();
+
+        Department::create([
+            'name'        => $request->name,
+            'code'        => $code,
+            'status'      => $request->status,
+            'description' => $request->description,
+        ]);
 
         return redirect()
             ->route('departments.index')
@@ -51,13 +58,20 @@ class DepartmentController extends Controller
     public function update(Request $request, Department $department)
     {
         $request->validate([
-            'name' => 'required|unique:departments,name,' . $department->id,
-            'code' => 'nullable|max:10',
-            'status' => 'required',
-            'description' => 'nullable'
+            'name'        => 'required|unique:departments,name,' . $department->id,
+            'code'        => 'nullable|max:10|regex:/^[A-Z0-9\-]+$/|unique:departments,code,' . $department->id,
+            'status'      => 'required|in:0,1',
+            'description' => 'nullable',
         ]);
 
-        $department->update($request->all());
+        $code = $request->code ?: $department->code ?: $this->generateDepartmentCode();
+
+        $department->update([
+            'name'        => $request->name,
+            'code'        => $code,
+            'status'      => $request->status,
+            'description' => $request->description,
+        ]);
 
         return redirect()
             ->route('departments.index')
@@ -86,5 +100,20 @@ class DepartmentController extends Controller
         return back()->with('success', 'Department permanently deleted.');
     }
 
+    /**
+     * ✅ Auto-generate sequential department code: DEPT-001
+     */
+    private function generateDepartmentCode(): string
+    {
+        $lastCode = Department::withTrashed()
+            ->where('code', 'like', 'DEPT-%')
+            ->orderByRaw('CAST(SUBSTRING(code, 6) AS UNSIGNED) DESC')
+            ->value('code');
 
+        $number = $lastCode
+            ? (int) substr($lastCode, 5) + 1
+            : 1;
+
+        return 'DEPT-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+    }
 }

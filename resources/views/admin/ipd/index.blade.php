@@ -24,14 +24,6 @@
     @endcan
 </div>
 
-{{-- SUCCESS MESSAGE --}}
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade in">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <i class="ace-icon fa fa-check"></i> {{ session('success') }}
-</div>
-@endif
-
 <div class="row">
     <div class="col-xs-12">
 

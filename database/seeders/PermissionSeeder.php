@@ -11,184 +11,61 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
 
-            // Dashboard
             'dashboard.view',
 
             // Users & Roles
-            'roles.view',
-            'roles.create',
-            'roles.edit',
-            'roles.delete',
-            'users.view',
-            'users.create',
-            'users.edit',
-            'users.delete',
-            'departments.view',
-            'departments.create',
-            'departments.edit',
-            'departments.delete',
-            'auditlogs.view',
-            'notification-settings.view',
-            'notification-settings.edit',
+            'roles.view','roles.create','roles.edit','roles.delete',
+            'users.view','users.create','users.edit','users.delete',
 
-            // Consultations
-            'consultations.view',
-            'consultations.create',
-            'consultations.edit',
-            'consultations.end',
+            // Departments
+            'departments.view','departments.create','departments.edit','departments.delete',
 
-            // Doctors
-            'doctors.view',
-            'doctors.create',
-            'doctors.edit',
-            'doctors.delete',
+            // Patients / Doctors
+            'patients.view','patients.create','patients.edit','patients.delete',
+            'doctors.view','doctors.create','doctors.edit','doctors.delete',
 
-            // Patients
-            'patients.view',
-            'patients.create',
-            'patients.edit',
-            'patients.delete',
-
-            // OPD
-            'opd.view',
-            'opd.create',
-            'opd.edit',
-            'opd.delete',
-
-            // IPD
-            'ipd.view',
-            'ipd.create',
-            'ipd.edit',
-            'ipd.delete',
+            // OPD / IPD
+            'opd.view','opd.create','opd.edit','opd.delete',
+            'ipd.view','ipd.create','ipd.edit','ipd.delete','ipd.discharge',
 
             // Appointments
-            'appointments.view',
-            'appointments.create',
-            'appointments.edit',
-            'appointments.delete',
+            'appointments.view','appointments.create','appointments.edit','appointments.delete',
+            'doctor-schedule.view','doctor-schedule.create','doctor-schedule.edit','doctor-schedule.delete',
 
-            // Doctor Schedule
-            'doctor-schedule.view',
-            'doctor-schedule.create',
-            'doctor-schedule.edit',
-            'doctor-schedule.delete',
+            // Consultations
+            'consultations.view','consultations.create','consultations.edit','consultations.end',
 
-            // Ward & Room
-            'wards.view',
-            'wards.create',
-            'wards.edit',
-            'wards.delete',
-            'rooms.view',
-            'rooms.create',
-            'rooms.edit',
-            'rooms.delete',
-            'beds.view',
-            'beds.create',
-            'beds.edit',
-            'beds.delete',
+            // LAB + RADIOLOGY (FULL)
+            'lab-test-categories.view','lab-test-categories.create','lab-test-categories.edit','lab-test-categories.delete',
+            'lab-tests.view','lab-tests.create','lab-tests.edit','lab-tests.delete',
+            'lab-parameters.view','lab-parameters.create','lab-parameters.edit','lab-parameters.delete',
+            'lab-requests.view','lab-requests.create','lab-requests.edit','lab-requests.delete',
+            'lab-samples.collect',
+            'lab-results.view','lab-results.create','lab-results.edit','lab-results.delete',
+            'lab-reports.view','lab-reports.download',
 
-            // Pharmacy
-            'medicine-categories.view',
-            'medicine-categories.create',
-            'medicine-categories.edit',
-            'medicine-categories.delete',
-            'medicine-units.view',
-            'medicine-units.create',
-            'medicine-units.edit',
-            'medicine-units.delete',
-            'medicines.view',
-            'medicines.create',
-            'medicines.edit',
-            'medicines.delete',
-            'stock-adjustments.view',
-            'stock-adjustments.create',
-            'stock-adjustments.edit',
-            'stock-adjustments.delete',
-            'suppliers.view',
-            'suppliers.create',
-            'suppliers.edit',
-            'suppliers.delete',
-            'purchases.view',
-            'purchases.create',
-            'purchases.edit',
-            'purchases.delete',
-            'issue-medicines.view',
-            'issue-medicines.create',
-            'issue-medicines.edit',
-            'issue-medicines.delete',
+            'radiology-categories.view','radiology-categories.create','radiology-categories.edit','radiology-categories.delete',
+            'radiology-tests.view','radiology-tests.create','radiology-tests.edit','radiology-tests.delete',
+            'radiology-requests.view','radiology-requests.create','radiology-requests.edit','radiology-requests.delete',
+            'radiology-tests.start',
+            'radiology-results.view','radiology-results.create','radiology-results.edit','radiology-results.delete',
+            'radiology-reports.view','radiology-reports.download',
 
-            // Lab
-            'lab-test-categories.view',
-            'lab-test-categories.create',
-            'lab-test-categories.edit',
-            'lab-test-categories.delete',
-            'lab-tests.view',
-            'lab-tests.create',
-            'lab-tests.edit',
-            'lab-tests.delete',
-            'lab-requests.view',
-            'lab-requests.create',
-            'lab-requests.edit',
-            'lab-requests.delete',
+            // Pharmacy / Inventory
+            'medicines.view','medicines.create','medicines.edit','medicines.delete',
+            'issue-medicines.view','issue-medicines.create',
+            'purchases.view','purchases.create','purchases.edit','purchases.delete',
+            'suppliers.view','suppliers.create','suppliers.edit','suppliers.delete',
+            'stock-adjustments.view','stock-adjustments.create',
 
-            // Radiology
-            'radiology-categories.view',
-            'radiology-categories.create',
-            'radiology-categories.edit',
-            'radiology-categories.delete',
-            'radiology-tests.view',
-            'radiology-tests.create',
-            'radiology-tests.edit',
-            'radiology-tests.delete',
-            'radiology-requests.view',
-            'radiology-requests.create',
-            'radiology-requests.edit',
-            'radiology-requests.delete',
-
-            // Billing
-            'billing.view',
-            'billing.create',
-            'billing.edit',
-            'billing.delete',
-
-            // HR
-            'employees.view',
-            'employees.create',
-            'employees.edit',
-            'employees.delete',
-            'leave-types.view',
-            'leave-types.create',
-            'leave-types.edit',
-            'leave-types.delete',
-            'leave-applications.view',
-            'leave-applications.create',
-            'leave-applications.edit',
-            'leave-applications.delete',
-            'attendance.view',
-            'attendance.create',
-            'attendance.edit',
-            'attendance.delete',
-            'salary-structures.view',
-            'salary-structures.create',
-            'salary-structures.edit',
-            'salary-structures.delete',
-            'payroll.view',
-            'payroll.create',
-            'payroll.edit',
-            'payroll.delete',
-
-            // Export
+            // Billing / HR / Export
+            'billing.view','billing.create','billing.edit','billing.delete',
+            'hr.manage',
             'export.view',
-
-            // Multi Hospital (central management)
-            'hospitals.view',
-            'hospitals.create',
-            'hospitals.edit',
-            'hospitals.delete',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(['name'=>$permission,'guard_name'=>'web']);
         }
     }
 }

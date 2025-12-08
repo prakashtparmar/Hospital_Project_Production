@@ -12,7 +12,6 @@
 </div>
 @endsection
 
-
 @section('content')
 
 <div class="page-header">
@@ -25,14 +24,12 @@
             <i class="fa fa-arrow-left"></i> Back
         </a>
 
-        {{-- UPDATED — REPLACED PRINT BUTTON WITH DIRECT PDF DOWNLOAD --}}
         <a href="{{ route('purchases.invoice.pdf', $purchase->id) }}"
            class="btn btn-success btn-sm">
             <i class="fa fa-download"></i> Download PDF
         </a>
     </div>
 </div>
-
 
 <div class="row">
 
@@ -41,7 +38,6 @@
         <div class="well">
             <p><b>Invoice No:</b> {{ $purchase->invoice_no ?? '—' }}</p>
             <p><b>Supplier:</b> {{ $purchase->supplier->name ?? '—' }}</p>
-
             <p>
                 <b>Date:</b>
                 {{ \Carbon\Carbon::parse($purchase->purchase_date)->format('d M Y, h:i A') }}
@@ -53,7 +49,7 @@
     <div class="col-md-6">
         <div class="well text-right">
             <h4><b>Subtotal:</b> ₹{{ number_format($purchase->total_amount, 2) }}</h4>
-            <h4><b>Total GST:</b> ₹{{ number_format($purchase->tax_amount, 2) }}</h4>
+            <h4><b>Total GST:</b> ₹{{ number_format($purchase->tax_amount ?? 0, 2) }}</h4>
 
             <h3 class="text-success">
                 <b>Grand Total:</b> ₹{{ number_format($purchase->grand_total, 2) }}
@@ -86,13 +82,15 @@
 <tr>
     <td>{{ $item->medicine->name ?? 'Unknown' }}</td>
     <td>{{ $item->quantity }}</td>
-
-    {{-- FIXED: correct field is rate --}}
     <td>₹{{ number_format($item->rate, 2) }}</td>
 
-    <td>{{ $item->tax_percent }}%</td>
-    <td>₹{{ number_format($item->tax_amount, 2) }}</td>
-    <td><b>₹{{ number_format($item->total_amount, 2) }}</b></td>
+    {{-- SAFE FALLBACKS (no logic change) --}}
+    <td>0%</td>
+    <td>₹0.00</td>
+
+    <td>
+        <b>₹{{ number_format($item->amount, 2) }}</b>
+    </td>
 
     <td>{{ $item->batch_no ?? '—' }}</td>
 

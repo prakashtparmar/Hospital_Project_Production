@@ -23,4 +23,17 @@ class LabTestRequest extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
+    public function doctor()
+{
+    return $this->belongsTo(\App\Models\User::class, 'doctor_id');
+}
+
+// App\Models\LabTestRequest.php
+public function results()
+{
+    return $this->hasMany(LabTestResult::class, 'request_id');
+}
+
+
 }

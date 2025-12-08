@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Patient;
+use App\Models\User;
 
 class RadiologyRequest extends Model
 {
@@ -23,4 +25,16 @@ class RadiologyRequest extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
+    public function doctor()
+{
+    return $this->belongsTo(User::class, 'doctor_id');
+}
+
+public function report()
+{
+    return $this->hasOne(RadiologyReport::class, 'request_id');
+}
+
+
 }

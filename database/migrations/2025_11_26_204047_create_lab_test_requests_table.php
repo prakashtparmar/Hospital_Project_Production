@@ -11,7 +11,8 @@ return new class extends Migration {
             $table->id();
 
             $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('doctor_id');
+            $table->unsignedBigInteger('doctor_id')->nullable();
+
             $table->unsignedBigInteger('opd_id')->nullable();
             $table->unsignedBigInteger('ipd_id')->nullable();
 
