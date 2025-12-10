@@ -244,6 +244,12 @@ class PermissionSeeder extends Seeder
             'hospitals.create',
             'hospitals.edit',
             'hospitals.delete',
+
+            'product-list',
+    'product-create',
+    'product-edit',
+    'product-delete',
+    'product-print',
         ];
 
         foreach ($permissions as $permission) {

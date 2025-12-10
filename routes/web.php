@@ -51,6 +51,8 @@ use App\Http\Controllers\Admin\{
     PrescriptionController,
     ActivityLogController,
     PrescriptionItemController,
+    ProductController,
+    PDFController,
 };
 
 use App\Http\Controllers\Central\HospitalController;
@@ -96,6 +98,13 @@ Route::middleware('auth')->group(function () {
             ->name('departments.force-delete');
     });
 
+
+     
+
+    Route::resource('products', ProductController::class);
+
+   Route::get('products/{id}/pdf/{template?}', [PDFController::class, 'generatePDF'])
+        ->name('products.pdf');
 
     // ==========================
     // Patient / OPD / IPD
