@@ -1,0 +1,169 @@
+/* ---------------------------------------------------------
+   MODULE 2 — NAVBAR + SIDEBAR (Modern HMS UI)
+   --------------------------------------------------------- */
+
+/* ====== NAVBAR ====== */
+.navbar-modern {
+    background: var(--primary);
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    box-shadow: var(--shadow-md);
+}
+
+.navbar-modern .brand {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+.navbar-modern .nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.navbar-modern .nav-item {
+    color: #fff;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+}
+
+.navbar-modern .nav-item:hover {
+    opacity: 0.8;
+}
+
+/* ====== SIDEBAR WRAPPER ====== */
+.sidebar-modern {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid var(--gray-300);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 65px; /* space below navbar */
+    transition: 0.3s ease;
+    overflow-y: auto;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Collapsed Sidebar */
+.sidebar-modern.collapsed {
+    width: 68px;
+}
+
+.sidebar-modern.collapsed .menu-text {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-20px);
+}
+
+/* ====== SIDEBAR MENU LIST ====== */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--gray-700);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.sidebar-menu li i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-menu li:hover {
+    background: var(--gray-100);
+    color: var(--primary);
+}
+
+.sidebar-menu li.active {
+    background: var(--primary-light);
+    color: #fff;
+}
+
+.sidebar-menu li.active i {
+    color: #fff;
+}
+
+/* ====== SUBMENU ====== */
+.sidebar-menu li .submenu {
+    margin-top: 6px;
+    margin-left: 38px;
+    padding-left: 10px;
+    border-left: 2px solid var(--primary);
+    display: none;
+}
+
+.sidebar-menu li.open .submenu {
+    display: block;
+}
+
+.submenu li {
+    padding: 8px 0;
+    color: var(--gray-600);
+    font-size: 13px;
+}
+
+.submenu li:hover {
+    color: var(--primary);
+}
+
+/* ====== TOGGLER ====== */
+.sidebar-toggler {
+    position: absolute;
+    top: 12px;
+    right: -16px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+}
+
+.sidebar-toggler:hover {
+    background: var(--primary-dark);
+}
+
+/* ====== MAIN CONTENT AREA ====== */
+.content-modern {
+    margin-left: 240px;
+    padding: var(--space-4);
+    transition: var(--transition);
+}
+
+.sidebar-modern.collapsed ~ .content-modern {
+    margin-left: 68px;
+}
+
+/* ===== Scrollbar (Modern Minimal) ===== */
+.sidebar-modern::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-modern::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: 4px;
+}
