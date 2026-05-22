@@ -3,23 +3,25 @@
 @section('content')
 
 <style>
-    /* Modern gradient background */
     body.login-layout {
-        background: linear-gradient(135deg, #4e73df, #1cc88a);
+        background:
+            linear-gradient(rgba(18, 39, 63, 0.62), rgba(18, 39, 63, 0.62)),
+            url("{{ asset('ace/assets/images/gallery/image-1.jpg') }}") center/cover no-repeat fixed;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
     }
 
-    /* Stylish login container */
     .login-box {
         width: 420px !important;
-        background: #ffffffd9;
-        border-radius: 12px;
-        box-shadow: 0px 10px 28px rgba(0,0,0,0.25);
-        padding: 35px 30px;
-        animation: fadeIn 0.6s ease-in-out;
+        max-width: calc(100vw - 30px);
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+        padding: 34px 30px 30px;
+        animation: fadeIn 0.45s ease-in-out;
     }
 
     @keyframes fadeIn {
@@ -27,61 +29,80 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Input field effects */
     .form-control {
-        height: 45px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        padding-left: 40px;
-        transition: all 0.3s ease;
+        height: 44px;
+        border-radius: 6px !important;
+        border: 1px solid #d5dbe4;
+        padding-left: 42px;
+        box-shadow: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .form-control:focus {
-        border-color: #4e73df;
-        box-shadow: 0 0 8px rgba(78,115,223,0.4);
+        border-color: #2f7db6;
+        box-shadow: 0 0 0 3px rgba(47, 125, 182, 0.15);
     }
 
     .input-icon-right i {
         top: 12px;
         font-size: 18px;
-        opacity: 0.5;
-        transition: 0.3s;
+        color: #7d8998;
+        opacity: 0.75;
+        transition: color 0.2s ease, opacity 0.2s ease;
     }
 
     .form-control:focus + i {
         opacity: 1;
-        color: #4e73df;
+        color: #2f7db6;
     }
 
-    /* Button styling */
     .btn-login-animated {
         width: 100%;
-        height: 45px;
-        border-radius: 8px;
+        height: 44px;
+        border-radius: 6px;
         font-size: 16px;
-        font-weight: bold;
-        background: linear-gradient(135deg, #1cc88a, #0da672);
+        font-weight: 700;
+        background: #2f7db6;
         border: none;
-        color: white;
-        transition: 0.3s ease;
-    }
-    .btn-login-animated:hover {
-        background: linear-gradient(135deg, #0da672, #0a8f61);
-        transform: scale(1.03);
+        color: #fff;
+        transition: background 0.2s ease, transform 0.2s ease;
     }
 
-    /* Title */
+    .btn-login-animated:hover {
+        background: #246b9e;
+        transform: translateY(-1px);
+    }
+
     .login-title {
-        font-size: 28px;
+        font-size: 27px;
         font-weight: 800;
-        letter-spacing: 1px;
+        letter-spacing: 0;
         margin-bottom: 10px;
+        color: #2f7db6;
     }
 
     .login-subtitle {
         font-size: 15px;
         font-weight: 500;
-        opacity: 0.9;
+        color: #6f7a86;
+    }
+
+    .remember-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 24px;
+    }
+
+    .login-alert {
+        border-radius: 6px;
+        margin-bottom: 18px;
+    }
+
+    @media (max-width: 480px) {
+        .login-box {
+            padding: 28px 22px;
+        }
     }
 </style>
 
@@ -96,8 +117,14 @@
 
     {{-- Validation Error --}}
     @if ($errors->any())
-        <div class="alert alert-danger text-center">
+        <div class="alert alert-danger text-center login-alert">
             {{ $errors->first() }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success text-center login-alert">
+            {{ session('success') }}
         </div>
     @endif
 
@@ -105,32 +132,41 @@
         @csrf
 
         {{-- Email --}}
-<label class="block clearfix mb-3">
-    <span class="block input-icon input-icon-right">
-        <input type="email"
-               name="email"
-               class="form-control"
-               placeholder="Email Address"
-               value="admin@example.com"  required />
-        <i class="ace-icon fa fa-envelope"></i>
-    </span>
-</label>
+        <label class="block clearfix mb-3">
+            <span class="block input-icon input-icon-right">
+                <input type="email"
+                       name="email"
+                       class="form-control"
+                       placeholder="Email Address"
+                       value="{{ old('email', request()->cookie('remembered_login_email')) }}"
+                       autocomplete="email"
+                       autofocus
+                       required />
+                <i class="ace-icon fa fa-envelope"></i>
+            </span>
+        </label>
 
-{{-- Password --}}
-<label class="block clearfix mb-3">
-    <span class="block input-icon input-icon-right">
-        <input type="password"
-               name="password"
-               class="form-control"
-               placeholder="Password"
-               value="password"  required />
-        <i class="ace-icon fa fa-lock"></i>
-    </span>
-</label>
+        {{-- Password --}}
+        <label class="block clearfix mb-3">
+            <span class="block input-icon input-icon-right">
+                <input type="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="Password"
+                       autocomplete="current-password"
+                       required />
+                <i class="ace-icon fa fa-lock"></i>
+            </span>
+        </label>
+
         {{-- Remember Me --}}
-        <div class="mb-3">
+        <div class="mb-3 remember-row">
             <label class="inline">
-                <input type="checkbox" name="remember" class="ace">
+                <input type="checkbox"
+                       name="remember"
+                       value="1"
+                       class="ace"
+                       {{ old('remember', request()->cookie('remembered_login_email') ? '1' : null) ? 'checked' : '' }}>
                 <span class="lbl"> Remember Me</span>
             </label>
         </div>

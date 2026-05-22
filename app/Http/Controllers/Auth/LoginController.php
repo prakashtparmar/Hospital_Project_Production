@@ -21,9 +21,13 @@ class LoginController extends Controller
             'password' => 'required|min:6'
         ]);
 
-        if (! Auth::attempt($request->only('email', 'password'), $request->remember)) {
+        $remember = $request->boolean('remember');
+
+        if (! Auth::attempt($request->only('email', 'password'), $remember)) {
             return back()->withErrors(['email' => 'Invalid credentials']);
         }
+
+        $request->session()->regenerate();
 
         // 👈 ADD LOGIN LOG HERE
         UserLog::create([
@@ -34,7 +38,13 @@ class LoginController extends Controller
         ]);
         // 👆 END LOGIN LOG
 
-        return redirect()->route('dashboard');
+        $response = redirect()->route('dashboard');
+
+        if ($remember) {
+            return $response->withCookie(cookie('remembered_login_email', $request->email, 43200));
+        }
+
+        return $response->withCookie(cookie()->forget('remembered_login_email'));
     }
 
     /**
