@@ -55,8 +55,8 @@
                     <td>{{ $bed->id }}</td>
                     <td>{{ $bed->bed_no }}</td>
 
-                    <td>{{ $bed->room->room_no ?? '—' }}</td>
-                    <td>{{ $bed->room->ward->name ?? '—' }}</td>
+                    <td>{{ optional($bed->room)->room_no ?? '—' }}</td>
+                    <td>{{ optional(optional($bed->room)->ward)->name ?? '—' }}</td>
 
                     <td>
                         <span class="badge badge-{{ $bed->is_occupied ? 'danger' : 'success' }}">
@@ -117,7 +117,7 @@
                                             @foreach($rooms as $r)
                                                 <option value="{{ $r->id }}"
                                                     {{ $bed->room_id == $r->id ? 'selected':'' }}>
-                                                    Room {{ $r->room_no }} - {{ $r->ward->name }}
+                                                    Room {{ $r->room_no }} - {{ optional($r->ward)->name ?? '—' }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -197,7 +197,7 @@
                             <option value="">-- Select Room --</option>
                             @foreach($rooms as $r)
                                 <option value="{{ $r->id }}">
-                                    Room {{ $r->room_no }} - {{ $r->ward->name }}
+                                    Room {{ $r->room_no }} - {{ optional($r->ward)->name ?? '—' }}
                                 </option>
                             @endforeach
                         </select>

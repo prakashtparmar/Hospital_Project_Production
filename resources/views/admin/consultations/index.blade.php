@@ -51,11 +51,11 @@
                                     <td>{{ $c->id }}</td>
 
                                     <td>
-                                        {{ $c->patient->patient_id }} -
-                                        {{ $c->patient->first_name }} {{ $c->patient->last_name }}
+                                        {{ optional($c->patient)->patient_id ?? '---' }} -
+                                        {{ optional($c->patient)->first_name }} {{ optional($c->patient)->last_name }}
                                     </td>
 
-                                    <td>{{ $c->doctor->name }}</td>
+                                    <td>{{ optional($c->doctor)->name ?? '---' }}</td>
 
                                     <td>
                                         @php

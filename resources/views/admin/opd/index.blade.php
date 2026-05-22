@@ -68,7 +68,7 @@
                         <td>{{ $v->opd_no }}</td>
 
                         {{-- Patient Name --}}
-                        <td>{{ $v->patient->full_name }}</td>
+                        <td>{{ optional($v->patient)->full_name ?? '---' }}</td>
 
                         {{-- Visit Date --}}
                         <td>
@@ -79,10 +79,10 @@
                         </td>
 
                         {{-- Doctor --}}
-                        <td>{{ $v->doctor->name ?? '---' }}</td>
+                        <td>{{ optional($v->doctor)->name ?? '---' }}</td>
 
                         {{-- Department --}}
-                        <td>{{ $v->department->name ?? '---' }}</td>
+                        <td>{{ optional($v->department)->name ?? '---' }}</td>
 
                         {{-- Status --}}
                         <td>

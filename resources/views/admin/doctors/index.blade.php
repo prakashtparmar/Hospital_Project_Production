@@ -65,7 +65,7 @@
                                 <small class="text-muted">({{ $doc->email }})</small>
                             </td>
 
-                            <td>{{ $profile->department->name ?? 'N/A' }}</td>
+                            <td>{{ optional($profile->department)->name ?? 'N/A' }}</td>
 
                             <td>{{ $profile->specialization ?? '—' }}</td>
 

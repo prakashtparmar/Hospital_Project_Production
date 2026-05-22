@@ -67,16 +67,16 @@
                         <td>{{ $i->ipd_no }}</td>
 
                         {{-- Patient --}}
-                        <td>{{ $i->patient->full_name }}</td>
+                        <td>{{ optional($i->patient)->full_name ?? '---' }}</td>
 
                         {{-- Doctor --}}
-                        <td>{{ $i->doctor->name ?? '---' }}</td>
+                        <td>{{ optional($i->doctor)->name ?? '---' }}</td>
 
                         {{-- Ward / Room / Bed --}}
                         <td>
-                            {{ $i->ward->name ?? '---' }} /
-                            {{ $i->room->room_no ?? '---' }} /
-                            {{ $i->bed->bed_no ?? '---' }}
+                            {{ optional($i->ward)->name ?? '---' }} /
+                            {{ optional($i->room)->room_no ?? '---' }} /
+                            {{ optional($i->bed)->bed_no ?? '---' }}
                         </td>
 
                         {{-- Admission Date --}}

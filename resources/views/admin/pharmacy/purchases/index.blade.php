@@ -156,7 +156,7 @@
 @foreach ($p->items as $i)
 <tr>
     <td>{{ $loop->iteration }}</td>
-    <td>{{ $i->medicine->name ?? '' }}</td>
+    <td>{{ optional($i->medicine)->name ?? '' }}</td>
     <td>{{ $i->batch_no }}</td>
     <td>{{ $i->expiry_date ? \Carbon\Carbon::parse($i->expiry_date)->format('d M Y') : '—' }}</td>
     <td>{{ $i->quantity }}</td>

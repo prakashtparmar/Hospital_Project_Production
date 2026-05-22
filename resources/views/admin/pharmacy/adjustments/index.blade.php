@@ -40,7 +40,7 @@
                             @forelse ($adjustments as $adj)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $adj->medicine->name ?? '—' }}</td>
+                                    <td>{{ optional($adj->medicine)->name ?? '—' }}</td>
                                     <td>
                                         <span class="badge {{ $adj->adjust_quantity >= 0 ? 'badge-success' : 'badge-danger' }}">
                                             {{ $adj->adjust_quantity }}

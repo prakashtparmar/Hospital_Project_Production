@@ -20,7 +20,7 @@
 
             @foreach($adjustments as $adj)
             <tr>
-                <td>{{ $adj->medicine->name }}</td>
+                <td>{{ optional($adj->medicine)->name ?? '—' }}</td>
                 <td>{{ $adj->adjust_quantity }}</td>
                 <td>{{ $adj->reason }}</td>
                 <td>{{ $adj->created_at }}</td>

@@ -48,8 +48,8 @@
                 <tbody>
                     @foreach($schedules as $s)
                     <tr>
-                        <td>{{ $s->doctor->name }}</td>
-                        <td>{{ $s->department->name ?? '-' }}</td>
+                        <td>{{ optional($s->doctor)->name ?? '-' }}</td>
+                        <td>{{ optional($s->department)->name ?? '-' }}</td>
                         <td>{{ $s->day }}</td>
                         <td>{{ date('h:i A', strtotime($s->start_time)) }} - {{ date('h:i A', strtotime($s->end_time)) }}</td>
                         <td>{{ $s->slot_duration }} mins</td>

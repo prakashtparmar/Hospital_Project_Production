@@ -67,11 +67,11 @@
 
                                                                     <td>{{ $a->token_no }}</td>
 
-                                                                    <td>{{ $a->patient->full_name }}</td>
+                                                                    <td>{{ optional($a->patient)->full_name ?? '---' }}</td>
 
-                                                                    <td>{{ $a->doctor->name }}</td>
+                                                                    <td>{{ optional($a->doctor)->name ?? '---' }}</td>
 
-                                                                    <td>{{ optional($a->department)->name }}</td>
+                                                                    <td>{{ optional($a->department)->name ?? '---' }}</td>
 
                                                                     {{-- FORMATTED DATE (04-Dec-2025) --}}
                                                                     <td>

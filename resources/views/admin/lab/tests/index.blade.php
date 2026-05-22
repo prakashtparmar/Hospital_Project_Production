@@ -72,7 +72,7 @@
                             @endif
                         </td>
 
-                        <td>{{ $test->category->name ?? '---' }}</td>
+                        <td>{{ optional($test->category)->name ?? '---' }}</td>
                         <td>
                             {{ $test->parameters_count ?? $test->parameters->count() }}
                             @can('lab-parameters.view')

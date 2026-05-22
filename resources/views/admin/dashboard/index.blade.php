@@ -248,7 +248,7 @@
                                 <tbody>
                                     @foreach($top_doctors as $doc)
                                         <tr>
-                                            <td>{{ $doc->doctor->name ?? 'N/A' }}</td>
+                                            <td>{{ optional($doc->doctor)->name ?? 'N/A' }}</td>
                                             <td><b>{{ $doc->total }}</b></td>
                                         </tr>
                                     @endforeach
@@ -324,7 +324,7 @@
                             <div class="card-header bg-light">
                                 <h5 class="m-0">
                                     <i class="fa fa-user-md text-success"></i>
-                                    {{ $apps->first()->doctor->name ?? 'Unknown Doctor' }}
+                                    {{ optional($apps->first()->doctor)->name ?? 'Unknown Doctor' }}
                                     <span class="badge badge-success ml-2">
                                         {{ $apps->count() }} Appointments
                                     </span>
@@ -346,7 +346,7 @@
                                         @foreach($apps as $a)
                                             <tr>
                                                 <td>{{ $a->token_no }}</td>
-                                                <td>{{ $a->patient->full_name ?? 'N/A' }}</td>
+                                                <td>{{ optional($a->patient)->full_name ?? 'N/A' }}</td>
                                                 <td>{{ $a->appointment_time }}</td>
                                                 <td>{{ ucfirst($a->status) }}</td>
                                                 <td>{{ $a->reason }}</td>
@@ -391,8 +391,8 @@
                         @foreach($today_opd_visits as $o)
                             <tr>
                                 <td>{{ $o->id }}</td>
-                                <td>{{ $o->patient->full_name ?? 'N/A' }}</td>
-                                <td>{{ $o->doctor->name ?? 'N/A' }}</td>
+                                <td>{{ optional($o->patient)->full_name ?? 'N/A' }}</td>
+                                <td>{{ optional($o->doctor)->name ?? 'N/A' }}</td>
                                 <td>{{ $o->visit_date }}</td>
                             </tr>
                         @endforeach
@@ -432,11 +432,11 @@
                         @foreach($today_ipd_admissions as $i)
                             <tr>
                                 <td>{{ $i->id }}</td>
-                                <td>{{ $i->patient->full_name ?? 'N/A' }}</td>
-                                <td>{{ $i->doctor->name ?? 'N/A' }}</td>
-                                <td>{{ $i->ward->name ?? '-' }}</td>
-                                <td>{{ $i->room->room_no ?? '-' }}</td>
-                                <td>{{ $i->bed->bed_no ?? '-' }}</td>
+                                <td>{{ optional($i->patient)->full_name ?? 'N/A' }}</td>
+                                <td>{{ optional($i->doctor)->name ?? 'N/A' }}</td>
+                                <td>{{ optional($i->ward)->name ?? '-' }}</td>
+                                <td>{{ optional($i->room)->room_no ?? '-' }}</td>
+                                <td>{{ optional($i->bed)->bed_no ?? '-' }}</td>
                                 <td>{{ $i->admission_date }}</td>
                             </tr>
                         @endforeach
@@ -509,7 +509,7 @@
                         @foreach($today_pending_lab as $l)
                             <tr>
                                 <td>{{ $l->id }}</td>
-                                <td>{{ $l->patient->full_name ?? 'N/A' }}</td>
+                                <td>{{ optional($l->patient)->full_name ?? 'N/A' }}</td>
                                 <td>{{ $l->test_name }}</td>
                                 <td>{{ $l->status }}</td>
                             </tr>
@@ -547,7 +547,7 @@
                         @foreach($today_pending_radio as $r)
                             <tr>
                                 <td>{{ $r->id }}</td>
-                                <td>{{ $r->patient->full_name ?? 'N/A' }}</td>
+                                <td>{{ optional($r->patient)->full_name ?? 'N/A' }}</td>
                                 <td>{{ $r->test_name }}</td>
                                 <td>{{ $r->status }}</td>
                             </tr>

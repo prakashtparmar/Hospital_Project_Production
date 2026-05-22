@@ -52,7 +52,7 @@
                 <tr>
                     <td>{{ $room->id }}</td>
                     <td>{{ $room->room_no }}</td>
-                    <td>{{ $room->ward->name ?? '—' }}</td>
+                    <td>{{ optional($room->ward)->name ?? '—' }}</td>
 
                     <td>
                         <span class="badge badge-{{ $room->status ? 'success':'danger' }}">

@@ -77,7 +77,7 @@
                         @endif
                     </td>
 
-                    <td>{{ $patient->department->name ?? '---' }}</td>
+                    <td>{{ optional($patient->department)->name ?? '---' }}</td>
 
                     <td class="text-center">
 

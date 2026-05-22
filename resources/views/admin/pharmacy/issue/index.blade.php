@@ -63,7 +63,7 @@
 
 
                         {{-- DOCTOR NAME --}}
-                        <td>{{ $i->doctor->name ?? 'N/A' }}</td>
+                        <td>{{ optional($i->doctor)->name ?? 'N/A' }}</td>
 
                         {{-- TOTAL ITEMS --}}
                         <td>{{ $i->items->count() }}</td>

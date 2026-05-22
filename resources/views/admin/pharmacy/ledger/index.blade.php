@@ -37,7 +37,7 @@
         @foreach($ledger as $l)
         <tr>
             <td>{{ $l->created_at->format('d-m-Y H:i') }}</td>
-            <td>{{ $l->medicine->name }}</td>
+            <td>{{ optional($l->medicine)->name ?? '—' }}</td>
             <td class="{{ $l->quantity >= 0 ? 'text-success' : 'text-danger' }}">
                 {{ $l->quantity }}
             </td>
