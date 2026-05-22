@@ -80,21 +80,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin-dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
-    // ==========================
-    // Master Admin ONLY
-    // ==========================
-    Route::middleware(['role:master-admin'])->group(function () {
+    // Admin management routes are protected by controller permissions.
+    Route::resource('roles', RoleController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('departments', DepartmentController::class);
 
-        Route::resource('roles', RoleController::class);
-        Route::resource('users', UserController::class);
-        Route::resource('departments', DepartmentController::class);
+    Route::post('departments/{id}/restore', [DepartmentController::class, 'restore'])
+        ->name('departments.restore');
 
-        Route::post('departments/{id}/restore', [DepartmentController::class, 'restore'])
-            ->name('departments.restore');
-
-        Route::delete('departments/{id}/force-delete', [DepartmentController::class, 'forceDelete'])
-            ->name('departments.force-delete');
-    });
+    Route::delete('departments/{id}/force-delete', [DepartmentController::class, 'forceDelete'])
+        ->name('departments.force-delete');
 
     Route::resource('doctors', DoctorController::class);
 

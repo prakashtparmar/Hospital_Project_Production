@@ -221,11 +221,34 @@
                                     'lab-tests.delete',
                                 ],
 
+                                'Lab Parameters' => [
+                                    'lab-parameters.view',
+                                    'lab-parameters.create',
+                                    'lab-parameters.edit',
+                                    'lab-parameters.delete',
+                                ],
+
                                 'Lab Requests' => [
                                     'lab-requests.view',
                                     'lab-requests.create',
                                     'lab-requests.edit',
                                     'lab-requests.delete',
+                                ],
+
+                                'Lab Samples' => [
+                                    'lab-samples.collect',
+                                ],
+
+                                'Lab Results' => [
+                                    'lab-results.view',
+                                    'lab-results.create',
+                                    'lab-results.edit',
+                                    'lab-results.delete',
+                                ],
+
+                                'Lab Reports' => [
+                                    'lab-reports.view',
+                                    'lab-reports.download',
                                 ],
 
                                 'Radiology Categories' => [
@@ -247,6 +270,23 @@
                                     'radiology-requests.create',
                                     'radiology-requests.edit',
                                     'radiology-requests.delete',
+                                ],
+
+                                'Radiology Workflow' => [
+                                    'radiology-tests.start',
+                                ],
+
+                                'Radiology Results' => [
+                                    'radiology-results.view',
+                                    'radiology-results.create',
+                                    'radiology-results.edit',
+                                    'radiology-results.delete',
+                                ],
+
+                                'Radiology Reports' => [
+                                    'radiology-reports.view',
+                                    'radiology-reports.update',
+                                    'radiology-reports.download',
                                 ],
 
                                 'Billing' => [

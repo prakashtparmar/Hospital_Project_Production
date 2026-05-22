@@ -71,13 +71,13 @@
             <div class="form-group">
 
                 {{-- ✅ CORRECT PERMISSIONS --}}
-                @canany(['radiology-results.create','radiology-results.edit'])
+                @can('radiology-results.edit')
                 @if($radiology_request->status !== 'Completed')
                 <button type="submit" class="btn btn-success">
                     <i class="ace-icon fa fa-save"></i> Save Report
                 </button>
                 @endif
-                @endcanany
+                @endcan
 
                 <a href="{{ route('radiology-requests.index') }}" class="btn btn-default">
                     <i class="ace-icon fa fa-arrow-left"></i> Back

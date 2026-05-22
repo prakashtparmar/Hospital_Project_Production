@@ -94,7 +94,7 @@
                 @endcan
 
                 {{-- ✅ ENTER / VIEW RESULTS --}}
-                @canany(['lab-results.create','lab-results.edit','lab-results.view'])
+                @can('lab-results.view')
                     @if(in_array($req->status, ['Sample Collected','Completed']))
                         <a href="{{ route('lab-results.edit', $req->id) }}"
                            class="btn btn-xs btn-success">
@@ -102,7 +102,7 @@
                             {{ $req->status === 'Completed' ? 'View Results' : 'Enter Results' }}
                         </a>
                     @endif
-                @endcanany
+                @endcan
 
                 {{-- ✅ PDF --}}
                 @can('lab-reports.download')
@@ -112,6 +112,20 @@
                             <i class="fa fa-file-pdf-o"></i> PDF
                         </a>
                     @endif
+                @endcan
+
+                {{-- ✅ DELETE --}}
+                @can('lab-requests.delete')
+                    <form action="{{ route('lab-requests.destroy', $req->id) }}"
+                          method="POST"
+                          class="d-inline"
+                          onsubmit="return confirm('Delete this lab request?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-xs btn-danger">
+                            <i class="fa fa-trash-o"></i> Delete
+                        </button>
+                    </form>
                 @endcan
 
             </td>

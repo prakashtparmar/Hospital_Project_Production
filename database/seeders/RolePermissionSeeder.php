@@ -60,6 +60,7 @@ class RolePermissionSeeder extends Seeder
             // LAB – RESULTS & REPORTS
             'lab-results.view','lab-results.create','lab-results.edit','lab-results.delete',
             'lab-reports.view','lab-reports.download',
+            'lab-dashboard.view',
 
             // ==========================
             // RADIOLOGY – SETUP
@@ -73,7 +74,8 @@ class RolePermissionSeeder extends Seeder
 
             // RADIOLOGY – RESULTS & REPORTS
             'radiology-results.view','radiology-results.create','radiology-results.edit','radiology-results.delete',
-            'radiology-reports.view','radiology-reports.download',
+            'radiology-reports.view','radiology-reports.update','radiology-reports.download',
+            'radiology-dashboard.view',
 
             // ==========================
             // Pharmacy / Inventory
@@ -104,7 +106,7 @@ class RolePermissionSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
         $roles = [
-            'Master Admin','Admin','Doctor','Nurse','Receptionist',
+            'master-admin','Master Admin','Admin','Doctor','Nurse','Receptionist',
             'Accountant','Pharmacist','Lab Technician',
             'Radiology Technician','Store Manager','IPD Manager','HR Manager',
         ];
@@ -128,9 +130,14 @@ class RolePermissionSeeder extends Seeder
             'users.view','users.create','users.edit',
             'departments.view','departments.create','departments.edit',
             'doctors.view','doctors.create','doctors.edit','doctors.delete',
-            'lab-tests.view','lab-tests.create','lab-tests.edit',
-            'radiology-tests.view',
-            'lab-requests.view','radiology-requests.view',
+            'lab-test-categories.view','lab-tests.view','lab-tests.create','lab-tests.edit',
+            'lab-parameters.view','lab-requests.view','lab-requests.create','lab-requests.delete',
+            'lab-samples.collect','lab-results.view','lab-results.edit',
+            'lab-reports.view','lab-reports.download',
+            'radiology-categories.view','radiology-tests.view','radiology-tests.create','radiology-tests.edit',
+            'radiology-requests.view','radiology-requests.create','radiology-requests.delete',
+            'radiology-tests.start','radiology-results.view','radiology-results.edit',
+            'radiology-reports.view','radiology-reports.download',
         ]);
 
         // ✅ DOCTOR
@@ -146,16 +153,16 @@ class RolePermissionSeeder extends Seeder
         // ✅ LAB TECHNICIAN
         Role::findByName('Lab Technician')->givePermissionTo([
             'lab-tests.view','lab-parameters.view','lab-requests.view',
-            'lab-samples.collect','lab-results.create','lab-results.edit',
-            'lab-reports.view',
+            'lab-samples.collect','lab-results.view','lab-results.create','lab-results.edit',
+            'lab-reports.view','lab-reports.download',
         ]);
 
         // ✅ RADIOLOGY TECHNICIAN
         Role::findByName('Radiology Technician')->givePermissionTo([
             'radiology-requests.view',
             'radiology-tests.start',
-            'radiology-results.create','radiology-results.edit',
-            'radiology-reports.view',
+            'radiology-results.view','radiology-results.create','radiology-results.edit',
+            'radiology-reports.view','radiology-reports.download',
         ]);
     }
 }

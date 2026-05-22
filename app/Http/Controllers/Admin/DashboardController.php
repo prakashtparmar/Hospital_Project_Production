@@ -37,16 +37,13 @@ class DashboardController extends Controller
             // 'total_medicines' => Medicine::count(),
 
             // ---- Pharmacy ----
-'low_stock' => Medicine::whereNull('deleted_at')
-    ->whereColumn('current_stock', '<', 'reorder_level')
-    ->count(),
-
-'total_medicines' => Medicine::whereNull('deleted_at')->count(),
+            'low_stock' => Medicine::whereColumn('current_stock', '<=', 'reorder_level')->count(),
+            'total_medicines' => Medicine::count(),
 
 
             // ---- Lab & Radiology ----
-            'pending_lab' => LabTestRequest::where('status', 'pending')->count(),
-            'pending_radio' => RadiologyRequest::where('status', 'pending')->count(),
+            'pending_lab' => LabTestRequest::where('status', 'Pending')->count(),
+            'pending_radio' => RadiologyRequest::where('status', 'Pending')->count(),
 
             // ---- Bed / Ward ----
             'total_wards' => Ward::count(),
@@ -118,12 +115,12 @@ class DashboardController extends Controller
                 ->orderBy('current_stock')
                 ->get(),
 
-            'today_pending_lab' => LabTestRequest::where('status', 'pending')
-                ->with('patient')
+            'today_pending_lab' => LabTestRequest::where('status', 'Pending')
+                ->with(['patient', 'items.test'])
                 ->get(),
 
-            'today_pending_radio' => RadiologyRequest::where('status', 'pending')
-                ->with('patient')
+            'today_pending_radio' => RadiologyRequest::where('status', 'Pending')
+                ->with(['patient', 'items.test'])
                 ->get(),
         ]);
     }

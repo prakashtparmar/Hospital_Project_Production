@@ -22,6 +22,9 @@ class RadiologyRequestController extends Controller
 
         // Start radiology test
         $this->middleware('permission:radiology-tests.start')->only(['start']);
+
+        // Delete radiology request
+        $this->middleware('permission:radiology-requests.delete')->only(['destroy']);
     }
 
     public function index()

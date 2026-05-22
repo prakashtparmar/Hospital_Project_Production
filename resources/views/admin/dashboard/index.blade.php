@@ -12,6 +12,31 @@
 @endsection
 
 @section('content')
+    @php
+        $monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $monthlyOpdData = collect(range(1, 12))->map(fn ($month) => (int) ($monthly_opd[$month] ?? 0))->values();
+        $monthlyIpdData = collect(range(1, 12))->map(fn ($month) => (int) ($monthly_ipd[$month] ?? 0))->values();
+        $monthlyRevenueData = collect(range(1, 12))->map(fn ($month) => (float) ($monthly_revenue[$month] ?? 0))->values();
+        $bedPercent = $total_beds > 0 ? min(100, max(0, ($occupied_beds / $total_beds) * 100)) : 0;
+    @endphp
+
+    <style>
+        .dashboard-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .dashboard-chart {
+            width: 100%;
+            height: 220px;
+        }
+
+        @media (min-width: 992px) {
+            .modal-xl {
+                width: 1100px;
+            }
+        }
+    </style>
 
     <div class="page-header d-flex justify-content-between">
         <h1 class="text-primary">
@@ -134,7 +159,7 @@
         <div class="col-sm-4">
             <div class="widget-box">
                 <div class="widget-header bg-purple">
-                    <h5 class="widget-title text-white"><i class="fa fa-x-ray"></i> Radiology</h5>
+                    <h5 class="widget-title text-white"><i class="fa fa-film"></i> Radiology</h5>
                 </div>
                 <div class="widget-body">
                     <div class="widget-main">
@@ -175,13 +200,9 @@
                             <b>{{ $total_beds }}</b>
                         </p>
 
-                        @php
-                            $percent = $total_beds > 0 ? ($occupied_beds / $total_beds) * 100 : 0;
-                        @endphp
-
                         <div class="progress">
-                            <div class="progress-bar progress-bar-danger" style="width: {{ $percent }}%">
-                                {{ round($percent) }}%
+                            <div class="progress-bar progress-bar-danger" style="width: {{ $bedPercent }}%">
+                                {{ round($bedPercent) }}%
                             </div>
                         </div>
 
@@ -238,22 +259,24 @@
                         @if($top_doctors->count() == 0)
                             <p class="text-muted">No OPD visits today.</p>
                         @else
-                            <table class="table table-bordered table-striped">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th>Doctor</th>
-                                        <th>Patients Seen</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($top_doctors as $doc)
+                            <div class="dashboard-table-wrap">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="bg-light">
                                         <tr>
-                                            <td>{{ optional($doc->doctor)->name ?? 'N/A' }}</td>
-                                            <td><b>{{ $doc->total }}</b></td>
+                                            <th>Doctor</th>
+                                            <th>Patients Seen</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($top_doctors as $doc)
+                                            <tr>
+                                                <td>{{ optional($doc->doctor)->name ?? 'N/A' }}</td>
+                                                <td><b>{{ $doc->total }}</b></td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         @endif
 
                     </div>
@@ -274,7 +297,7 @@
                 </div>
                 <div class="widget-body">
                     <div class="widget-main">
-                        <canvas id="opdIpdChart" height="180"></canvas>
+                        <div id="opdIpdChart" class="dashboard-chart"></div>
                     </div>
                 </div>
             </div>
@@ -287,7 +310,7 @@
                 </div>
                 <div class="widget-body">
                     <div class="widget-main">
-                        <canvas id="revenueChart" height="180"></canvas>
+                        <div id="revenueChart" class="dashboard-chart"></div>
                     </div>
                 </div>
             </div>
@@ -318,7 +341,7 @@
 
                 <div class="modal-body">
 
-                    @foreach($today_appointments_grouped as $doctorId => $apps)
+                    @forelse($today_appointments_grouped as $doctorId => $apps)
 
                         <div class="card mb-3">
                             <div class="card-header bg-light">
@@ -358,7 +381,9 @@
 
                         </div>
 
-                    @endforeach
+                    @empty
+                        <p class="text-muted mb-0">No appointments found for today.</p>
+                    @endforelse
 
                 </div>
 
@@ -379,24 +404,32 @@
 
                 <div class="modal-body">
 
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead {!! $thead !!}>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patient</th>
-                                <th>Doctor</th>
-                                <th>Visit Date</th>
-                            </tr>
-                        </thead>
-                        @foreach($today_opd_visits as $o)
-                            <tr>
-                                <td>{{ $o->id }}</td>
-                                <td>{{ optional($o->patient)->full_name ?? 'N/A' }}</td>
-                                <td>{{ optional($o->doctor)->name ?? 'N/A' }}</td>
-                                <td>{{ $o->visit_date }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
+                    <div class="dashboard-table-wrap">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead {!! $thead !!}>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Visit Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($today_opd_visits as $o)
+                                    <tr>
+                                        <td>{{ $o->id }}</td>
+                                        <td>{{ optional($o->patient)->full_name ?? 'N/A' }}</td>
+                                        <td>{{ optional($o->doctor)->name ?? 'N/A' }}</td>
+                                        <td>{{ $o->visit_date }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">No OPD visits found for today.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
 
@@ -417,30 +450,38 @@
 
                 <div class="modal-body">
 
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead {!! $thead !!}>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patient</th>
-                                <th>Doctor</th>
-                                <th>Ward</th>
-                                <th>Room</th>
-                                <th>Bed</th>
-                                <th>Admission Date</th>
-                            </tr>
-                        </thead>
-                        @foreach($today_ipd_admissions as $i)
-                            <tr>
-                                <td>{{ $i->id }}</td>
-                                <td>{{ optional($i->patient)->full_name ?? 'N/A' }}</td>
-                                <td>{{ optional($i->doctor)->name ?? 'N/A' }}</td>
-                                <td>{{ optional($i->ward)->name ?? '-' }}</td>
-                                <td>{{ optional($i->room)->room_no ?? '-' }}</td>
-                                <td>{{ optional($i->bed)->bed_no ?? '-' }}</td>
-                                <td>{{ $i->admission_date }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
+                    <div class="dashboard-table-wrap">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead {!! $thead !!}>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Ward</th>
+                                    <th>Room</th>
+                                    <th>Bed</th>
+                                    <th>Admission Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($today_ipd_admissions as $i)
+                                    <tr>
+                                        <td>{{ $i->id }}</td>
+                                        <td>{{ optional($i->patient)->full_name ?? 'N/A' }}</td>
+                                        <td>{{ optional($i->doctor)->name ?? 'N/A' }}</td>
+                                        <td>{{ optional($i->ward)->name ?? '-' }}</td>
+                                        <td>{{ optional($i->room)->room_no ?? '-' }}</td>
+                                        <td>{{ optional($i->bed)->bed_no ?? '-' }}</td>
+                                        <td>{{ $i->admission_date }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">No IPD admissions found for today.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
 
@@ -461,22 +502,30 @@
 
                 <div class="modal-body">
 
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead {!! $thead !!}>
-                            <tr>
-                                <th>Name</th>
-                                <th>Current Stock</th>
-                                <th>Reorder Level</th>
-                            </tr>
-                        </thead>
-                        @foreach($today_low_stock_medicines as $m)
-                            <tr>
-                                <td>{{ $m->name }}</td>
-                                <td>{{ $m->current_stock }}</td>
-                                <td>{{ $m->reorder_level }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
+                    <div class="dashboard-table-wrap">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead {!! $thead !!}>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Current Stock</th>
+                                    <th>Reorder Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($today_low_stock_medicines as $m)
+                                    <tr>
+                                        <td>{{ $m->name }}</td>
+                                        <td>{{ $m->current_stock }}</td>
+                                        <td>{{ $m->reorder_level }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">No low stock medicines found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
 
@@ -497,24 +546,34 @@
 
                 <div class="modal-body">
 
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead {!! $thead !!}>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patient</th>
-                                <th>Test</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        @foreach($today_pending_lab as $l)
-                            <tr>
-                                <td>{{ $l->id }}</td>
-                                <td>{{ optional($l->patient)->full_name ?? 'N/A' }}</td>
-                                <td>{{ $l->test_name }}</td>
-                                <td>{{ $l->status }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
+                    <div class="dashboard-table-wrap">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead {!! $thead !!}>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Tests</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($today_pending_lab as $l)
+                                    <tr>
+                                        <td>{{ $l->id }}</td>
+                                        <td>{{ optional($l->patient)->full_name ?? 'N/A' }}</td>
+                                        <td>
+                                            {{ $l->items->pluck('test.name')->filter()->implode(', ') ?: 'N/A' }}
+                                        </td>
+                                        <td>{{ ucfirst($l->status) }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">No pending lab requests found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
 
@@ -535,24 +594,34 @@
 
                 <div class="modal-body">
 
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead {!! $thead !!}>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patient</th>
-                                <th>Test</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        @foreach($today_pending_radio as $r)
-                            <tr>
-                                <td>{{ $r->id }}</td>
-                                <td>{{ optional($r->patient)->full_name ?? 'N/A' }}</td>
-                                <td>{{ $r->test_name }}</td>
-                                <td>{{ $r->status }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
+                    <div class="dashboard-table-wrap">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead {!! $thead !!}>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Tests</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($today_pending_radio as $r)
+                                    <tr>
+                                        <td>{{ $r->id }}</td>
+                                        <td>{{ optional($r->patient)->full_name ?? 'N/A' }}</td>
+                                        <td>
+                                            {{ $r->items->pluck('test.name')->filter()->implode(', ') ?: 'N/A' }}
+                                        </td>
+                                        <td>{{ ucfirst($r->status) }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">No pending radiology requests found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
 
@@ -561,3 +630,70 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('ace/assets/js/jquery.flot.min.js') }}"></script>
+    <script src="{{ asset('ace/assets/js/jquery.flot.resize.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof $ === 'undefined' || typeof $.plot === 'undefined') {
+                return;
+            }
+
+            const monthLabels = @json($monthLabels);
+            const monthlyOpdData = @json($monthlyOpdData);
+            const monthlyIpdData = @json($monthlyIpdData);
+            const monthlyRevenueData = @json($monthlyRevenueData);
+            const monthTicks = monthLabels.map(function (label, index) {
+                return [index + 1, label];
+            });
+            const toSeries = function (values) {
+                return values.map(function (value, index) {
+                    return [index + 1, Number(value) || 0];
+                });
+            };
+
+            const opdIpdChart = $('#opdIpdChart');
+            if (opdIpdChart.length) {
+                $.plot(opdIpdChart, [
+                    {
+                        label: 'OPD',
+                        data: toSeries(monthlyOpdData),
+                        color: '#6fb3e0',
+                        lines: { show: true, fill: true, fillColor: 'rgba(111, 179, 224, 0.15)' },
+                        points: { show: true }
+                    },
+                    {
+                        label: 'IPD',
+                        data: toSeries(monthlyIpdData),
+                        color: '#d15b47',
+                        lines: { show: true, fill: true, fillColor: 'rgba(209, 91, 71, 0.12)' },
+                        points: { show: true }
+                    }
+                ], {
+                    xaxis: { ticks: monthTicks },
+                    yaxis: { min: 0, tickDecimals: 0 },
+                    grid: { hoverable: true, borderWidth: 1, borderColor: '#ddd' },
+                    legend: { position: 'ne' }
+                });
+            }
+
+            const revenueChart = $('#revenueChart');
+            if (revenueChart.length) {
+                $.plot(revenueChart, [
+                    {
+                        label: 'Revenue',
+                        data: toSeries(monthlyRevenueData),
+                        color: '#87b87f',
+                        bars: { show: true, barWidth: 0.55, align: 'center', fill: true, fillColor: '#87b87f' }
+                    }
+                ], {
+                    xaxis: { ticks: monthTicks },
+                    yaxis: { min: 0 },
+                    grid: { hoverable: true, borderWidth: 1, borderColor: '#ddd' },
+                    legend: { show: false }
+                });
+            }
+        });
+    </script>
+@endpush

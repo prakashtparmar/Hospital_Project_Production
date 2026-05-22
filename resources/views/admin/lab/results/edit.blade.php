@@ -136,13 +136,15 @@
     </div>
 
     {{-- SAVE BUTTON --}}
-    @if($lab_request->status !== 'Completed' && $hasParameters)
-        <div class="text-center mt-3">
-            <button class="btn btn-success btn-lg">
-                <i class="fa fa-save"></i> Save Results
-            </button>
-        </div>
-    @endif
+    @can('lab-results.edit')
+        @if($lab_request->status !== 'Completed' && $hasParameters)
+            <div class="text-center mt-3">
+                <button class="btn btn-success btn-lg">
+                    <i class="fa fa-save"></i> Save Results
+                </button>
+            </div>
+        @endif
+    @endcan
 
 </form>
 

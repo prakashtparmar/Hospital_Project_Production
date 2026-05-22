@@ -22,6 +22,9 @@ class LabTestRequestController extends Controller
 
     // Collect sample
     $this->middleware('permission:lab-samples.collect')->only(['collectSample']);
+
+    // Delete request
+    $this->middleware('permission:lab-requests.delete')->only(['destroy']);
 }
 
     public function index()

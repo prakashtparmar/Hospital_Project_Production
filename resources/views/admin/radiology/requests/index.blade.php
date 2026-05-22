@@ -108,7 +108,7 @@
                 @endcan
 
                 {{-- 📝 REPORT ENTRY / VIEW --}}
-                @canany(['radiology-results.create','radiology-results.edit'])
+                @can('radiology-results.view')
                     @if(in_array($req->status, ['In Progress','Completed']))
                         <a href="{{ route('radiology-reports.edit',$req->id) }}"
                            class="btn btn-xs btn-success">
@@ -116,7 +116,7 @@
                             {{ $req->status === 'Completed' ? 'View Report' : 'Enter Report' }}
                         </a>
                     @endif
-                @endcanany
+                @endcan
 
                 {{-- 📄 PDF --}}
                 @can('radiology-reports.download')

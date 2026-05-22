@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class RadiologyReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:radiology-results.view')->only(['edit']);
+        $this->middleware('permission:radiology-results.edit')->only(['update']);
+        $this->middleware('permission:radiology-reports.download')->only(['pdf']);
+    }
+
     public function edit(RadiologyRequest $radiology_request)
     {
         $radiology_request->load(['patient', 'doctor', 'items.test', 'report']);
