@@ -35,6 +35,13 @@
                 <strong>Patient:</strong> {{ $radiology_request->patient?->full_name ?? 'N/A' }}
                 &nbsp; | &nbsp;
                 <strong>Status:</strong> {{ $radiology_request->status }}
+                <br>
+                <strong>Tests:</strong>
+                @forelse($radiology_request->items as $item)
+                    <span class="label label-grey">{{ $item->test?->name ?? 'Deleted Test' }}</span>
+                @empty
+                    <span class="text-muted">No tests</span>
+                @endforelse
             </div>
 
             {{-- Findings --}}
@@ -45,7 +52,8 @@
                     class="form-control"
                     rows="6"
                     placeholder="Enter radiology findings"
-                    required>{{ old('report', $radiology_request->report?->report) }}</textarea>
+                    required
+                    {{ $radiology_request->status === 'Completed' ? 'readonly' : '' }}>{{ old('report', $radiology_request->report?->report) }}</textarea>
             </div>
 
             {{-- Impression --}}
@@ -55,7 +63,8 @@
                     name="impression"
                     class="form-control"
                     rows="4"
-                    placeholder="Enter impression">{{ old('impression', $radiology_request->report?->impression) }}</textarea>
+                    placeholder="Enter impression"
+                    {{ $radiology_request->status === 'Completed' ? 'readonly' : '' }}>{{ old('impression', $radiology_request->report?->impression) }}</textarea>
             </div>
 
             {{-- Actions --}}
@@ -63,9 +72,11 @@
 
                 {{-- ✅ CORRECT PERMISSIONS --}}
                 @canany(['radiology-results.create','radiology-results.edit'])
+                @if($radiology_request->status !== 'Completed')
                 <button type="submit" class="btn btn-success">
                     <i class="ace-icon fa fa-save"></i> Save Report
                 </button>
+                @endif
                 @endcanany
 
                 <a href="{{ route('radiology-requests.index') }}" class="btn btn-default">

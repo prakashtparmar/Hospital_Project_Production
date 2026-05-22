@@ -13,6 +13,6 @@ class RadiologyRequestItem extends Model
 
     public function test()
     {
-        return $this->belongsTo(RadiologyTest::class);
+        return $this->belongsTo(RadiologyTest::class)->withTrashed();
     }
 }

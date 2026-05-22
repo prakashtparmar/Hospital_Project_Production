@@ -33,6 +33,10 @@ class RadiologyCategoryController extends Controller
 
     public function update(Request $request, RadiologyCategory $radiology_category)
     {
+        $request->validate([
+            'name' => 'required|unique:radiology_categories,name,' . $radiology_category->id,
+        ]);
+
         $radiology_category->update($request->all());
         return redirect()->route('radiology-categories.index')->with('success','Updated.');
     }

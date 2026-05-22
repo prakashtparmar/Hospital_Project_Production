@@ -44,8 +44,8 @@
             {{-- Doctor --}}
             <div class="form-group">
                 <label class="control-label">Referred Doctor</label>
-                <select name="doctor_id" class="form-control" required>
-                    <option value="">-- Select Doctor --</option>
+                <select name="doctor_id" class="form-control">
+                    <option value="">-- Optional --</option>
                     @foreach($doctors as $d)
                         <option value="{{ $d->id }}" {{ old('doctor_id') == $d->id ? 'selected' : '' }}>
                             {{ $d->name }}

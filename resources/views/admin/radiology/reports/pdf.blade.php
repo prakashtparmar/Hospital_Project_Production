@@ -32,7 +32,23 @@
     {{-- Patient Info --}}
     <div class="section">
         <p><span class="label">Patient:</span>
-            {{ $radiology_request->patient?->name ?? 'N/A' }}
+            {{ $radiology_request->patient?->full_name ?? 'N/A' }}
+        </p>
+
+        <p><span class="label">Patient ID:</span>
+            {{ $radiology_request->patient?->patient_id ?? '—' }}
+        </p>
+
+        <p><span class="label">Doctor:</span>
+            {{ $radiology_request->doctor?->name ?? '—' }}
+        </p>
+
+        <p><span class="label">Tests:</span>
+            @forelse($radiology_request->items as $item)
+                {{ $item->test?->name ?? 'Deleted Test' }}@if(!$loop->last), @endif
+            @empty
+                —
+            @endforelse
         </p>
 
         <p><span class="label">Request ID:</span>

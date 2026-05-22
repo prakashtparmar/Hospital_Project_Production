@@ -74,6 +74,18 @@
             </div>
 
             <div class="form-group">
+                <label class="control-label">Status</label>
+                <input type="hidden" name="status" value="0">
+                <label>
+                    <input type="checkbox"
+                           name="status"
+                           value="1"
+                           {{ old('status', 1) ? 'checked' : '' }}>
+                    <span class="lbl"> Active</span>
+                </label>
+            </div>
+
+            <div class="form-group">
                 @can('radiology-tests.create')
                 <button type="submit" class="btn btn-success">
                     <i class="ace-icon fa fa-save"></i> Save

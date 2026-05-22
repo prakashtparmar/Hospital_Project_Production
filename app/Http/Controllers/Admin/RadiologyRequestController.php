@@ -89,4 +89,12 @@ class RadiologyRequestController extends Controller
 
         return back()->with('success', 'Radiology test started.');
     }
+
+    public function destroy(RadiologyRequest $radiology_request)
+    {
+        $radiology_request->delete();
+
+        return redirect()->route('radiology-requests.index')
+            ->with('success', 'Radiology request deleted.');
+    }
 }

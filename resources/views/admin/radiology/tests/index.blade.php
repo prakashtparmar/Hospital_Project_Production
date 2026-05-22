@@ -38,9 +38,10 @@
                         <th>Name</th>
                         <th>Modality</th>
                         <th>Price</th>
-                        @can('radiology-tests.edit')
+                        <th>Status</th>
+                        @canany(['radiology-tests.edit','radiology-tests.delete'])
                         <th class="text-center">Actions</th>
-                        @endcan
+                        @endcanany
                     </tr>
                 </thead>
 
@@ -48,18 +49,40 @@
                     @foreach($tests as $test)
                     <tr>
                         <td>{{ $test->id }}</td>
-                        <td>{{ $test->category->name }}</td>
+                        <td>{{ optional($test->category)->name ?? '---' }}</td>
                         <td>{{ $test->name }}</td>
                         <td>{{ $test->modality }}</td>
-                        <td>{{ number_format($test->price,2) }}</td>
+                        <td>₹ {{ number_format($test->price,2) }}</td>
+                        <td>
+                            @if($test->status)
+                                <span class="label label-success">Active</span>
+                            @else
+                                <span class="label label-danger">Inactive</span>
+                            @endif
+                        </td>
 
-                        @can('radiology-tests.edit')
+                        @canany(['radiology-tests.edit','radiology-tests.delete'])
                         <td class="text-center">
+                            @can('radiology-tests.edit')
                             <a class="green" href="{{ route('radiology-tests.edit',$test->id) }}">
                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                             </a>
+                            @endcan
+
+                            @can('radiology-tests.delete')
+                            <form action="{{ route('radiology-tests.destroy', $test->id) }}"
+                                  method="POST"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Delete this radiology test?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-link red p-0" title="Delete">
+                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                </button>
+                            </form>
+                            @endcan
                         </td>
-                        @endcan
+                        @endcanany
                     </tr>
                     @endforeach
                 </tbody>

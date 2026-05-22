@@ -43,9 +43,9 @@
                         <th>Status</th>
                         <th>Created At</th>
                         <th>Updated At</th>
-                        @can('radiology-categories.edit')
+                        @canany(['radiology-categories.edit','radiology-categories.delete'])
                         <th class="text-center" width="120">Actions</th>
-                        @endcan
+                        @endcanany
                     </tr>
                 </thead>
 
@@ -62,12 +62,27 @@
                         <td>{{ $category->created_at?->format('d M, Y') ?? '---' }}</td>
                         <td>{{ $category->updated_at?->format('d M, Y') ?? '---' }}</td>
 
-                        @can('radiology-categories.edit')
+                        @canany(['radiology-categories.edit','radiology-categories.delete'])
                         <td class="text-center">
                             <div class="hidden-sm hidden-xs action-buttons">
+                                @can('radiology-categories.edit')
                                 <a class="green" href="{{ route('radiology-categories.edit',$category->id) }}">
                                     <i class="ace-icon fa fa-pencil bigger-130"></i>
                                 </a>
+                                @endcan
+
+                                @can('radiology-categories.delete')
+                                <form action="{{ route('radiology-categories.destroy', $category->id) }}"
+                                      method="POST"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Delete this category?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-link red p-0" title="Delete">
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </button>
+                                </form>
+                                @endcan
                             </div>
 
                             {{-- MOBILE --}}
@@ -78,6 +93,7 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right">
+                                        @can('radiology-categories.edit')
                                         <li>
                                             <a href="{{ route('radiology-categories.edit',$category->id) }}">
                                                 <span class="green">
@@ -85,11 +101,26 @@
                                                 </span>
                                             </a>
                                         </li>
+                                        @endcan
+
+                                        @can('radiology-categories.delete')
+                                        <li>
+                                            <form action="{{ route('radiology-categories.destroy', $category->id) }}"
+                                                  method="POST"
+                                                  onsubmit="return confirm('Delete this category?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-link red p-0" title="Delete">
+                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                </button>
+                                            </form>
+                                        </li>
+                                        @endcan
                                     </ul>
                                 </div>
                             </div>
                         </td>
-                        @endcan
+                        @endcanany
                     </tr>
                     @endforeach
                 </tbody>

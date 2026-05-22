@@ -69,6 +69,9 @@
                         {{ $item->test?->name }}
                     </span>
                 @endforeach
+                @if($req->items->isEmpty())
+                    <span class="text-muted">—</span>
+                @endif
             </td>
 
             {{-- ✅ STATUS --}}
@@ -123,6 +126,19 @@
                             <i class="fa fa-file-pdf-o"></i> PDF
                         </a>
                     @endif
+                @endcan
+
+                @can('radiology-requests.delete')
+                    <form action="{{ route('radiology-requests.destroy', $req->id) }}"
+                          method="POST"
+                          class="d-inline"
+                          onsubmit="return confirm('Delete this radiology request?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-xs btn-danger">
+                            <i class="fa fa-trash-o"></i> Delete
+                        </button>
+                    </form>
                 @endcan
 
             </td>
