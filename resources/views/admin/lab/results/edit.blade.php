@@ -19,6 +19,12 @@
 
 @section('content')
 
+@php
+    $hasParameters = $lab_request->items->contains(function ($item) {
+        return $item->test && $item->test->parameters->isNotEmpty();
+    });
+@endphp
+
 {{-- HEADER --}}
 <div class="page-header d-flex justify-content-between align-items-center">
     <h4 class="page-title">
@@ -113,16 +119,24 @@
             @empty
                 <tr>
                     <td colspan="4" class="text-center text-muted">
-                        No test parameters found.
+                        No tests found for this lab request.
                     </td>
                 </tr>
             @endforelse
+
+            @if($lab_request->items->isNotEmpty() && !$hasParameters)
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        No test parameters found.
+                    </td>
+                </tr>
+            @endif
             </tbody>
         </table>
     </div>
 
     {{-- SAVE BUTTON --}}
-    @if($lab_request->status !== 'Completed')
+    @if($lab_request->status !== 'Completed' && $hasParameters)
         <div class="text-center mt-3">
             <button class="btn btn-success btn-lg">
                 <i class="fa fa-save"></i> Save Results

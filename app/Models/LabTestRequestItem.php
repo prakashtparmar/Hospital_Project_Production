@@ -13,6 +13,6 @@ class LabTestRequestItem extends Model
 
     public function test()
     {
-        return $this->belongsTo(LabTest::class);
+        return $this->belongsTo(LabTest::class)->withTrashed();
     }
 }

@@ -18,6 +18,12 @@ class Appointment extends Model
         'token_no',
         'status',
         'reason',
+        'visit_type',
+        'appointment_type',
+        'chief_complaint',
+        'referral',
+        'priority',
+        'notes',
     ];
 
     protected $casts = [
@@ -37,5 +43,10 @@ class Appointment extends Model
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function consultation()
+    {
+        return $this->hasOne(Consultation::class);
     }
 }

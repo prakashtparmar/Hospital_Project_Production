@@ -18,6 +18,23 @@
 
 @section('content')
 
+<style>
+    .appointment-detail-table th {
+        width: 28%;
+        color: #555;
+        background: #f8f8f8;
+        vertical-align: middle !important;
+    }
+
+    .appointment-detail-table td {
+        vertical-align: middle !important;
+    }
+
+    .appointment-detail-table .detail-text {
+        white-space: pre-line;
+    }
+</style>
+
 <div class="page-header">
     <h1>
         Appointment Details
@@ -51,21 +68,26 @@
                         };
                     @endphp
 
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered appointment-detail-table">
                         <tbody>
 
                         <tr>
-                            <th width="30%">Patient</th>
-                            <td>{{ $appointment->patient->full_name }}</td>
+                            <th>Patient</th>
+                            <td>
+                                <strong>{{ optional($appointment->patient)->full_name ?? '---' }}</strong>
+                                @if(optional($appointment->patient)->patient_id)
+                                    <small class="text-muted">({{ $appointment->patient->patient_id }})</small>
+                                @endif
+                            </td>
                         </tr>
 
                         <tr>
                             <th>Doctor</th>
                             <td>
-                                {{ $appointment->doctor->name }}
+                                {{ optional($appointment->doctor)->name ?? '---' }}
                                 @if(optional($appointment->doctor->doctorProfile)->specialization)
                                     <small class="text-muted">
-                                        — {{ optional($appointment->doctor->doctorProfile)->specialization }}
+                                        - {{ optional($appointment->doctor->doctorProfile)->specialization }}
                                     </small>
                                 @endif
                             </td>
@@ -78,17 +100,25 @@
 
                         <tr>
                             <th>Appointment Date</th>
-                            <td>{{ $appointment->appointment_date }}</td>
+                            <td>
+                                {{ $appointment->appointment_date
+                                    ? \Carbon\Carbon::parse($appointment->appointment_date)->format('d-M-Y')
+                                    : '---' }}
+                            </td>
                         </tr>
 
                         <tr>
                             <th>Time Slot</th>
-                            <td>{{ $appointment->appointment_time ?? '---' }}</td>
+                            <td>
+                                {{ $appointment->appointment_time
+                                    ? \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A')
+                                    : '---' }}
+                            </td>
                         </tr>
 
                         <tr>
                             <th>Token No.</th>
-                            <td>{{ $appointment->token_no }}</td>
+                            <td>{{ $appointment->token_no ?? '---' }}</td>
                         </tr>
 
                         <tr>
@@ -117,7 +147,7 @@
 
                         <tr>
                             <th>Chief Complaint</th>
-                            <td>{{ $appointment->chief_complaint ?? '---' }}</td>
+                            <td class="detail-text">{{ $appointment->chief_complaint ?? $appointment->reason ?? '---' }}</td>
                         </tr>
 
                         <tr>
@@ -127,7 +157,7 @@
 
                         <tr>
                             <th>Notes</th>
-                            <td>{{ $appointment->notes ?? '---' }}</td>
+                            <td class="detail-text">{{ $appointment->notes ?? '---' }}</td>
                         </tr>
 
                         </tbody>

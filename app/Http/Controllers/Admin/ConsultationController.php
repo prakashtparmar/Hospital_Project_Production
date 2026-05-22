@@ -7,6 +7,7 @@ use App\Models\Consultation;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Appointment;
+use App\Models\Medicine;
 use App\Models\Prescription;
 use App\Models\PrescriptionItem;
 use App\Models\ConsultationDocument;
@@ -45,11 +46,14 @@ class ConsultationController extends Controller
     {
         $patients     = Patient::orderBy('first_name')->get();
         $doctors      = User::role('Doctor')->get();
+        $medicines    = Medicine::where('status', 1)
+                        ->orderBy('name')
+                        ->get(['id','name','strength','current_stock']);
         $appointment  = $request->appointment_id
                         ? Appointment::find($request->appointment_id)
                         : null;
 
-        return view('admin.consultations.create', compact('patients','doctors','appointment'));
+        return view('admin.consultations.create', compact('patients','doctors','medicines','appointment'));
     }
 
     /* STORE */

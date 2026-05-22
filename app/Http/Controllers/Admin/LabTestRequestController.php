@@ -79,4 +79,12 @@ class LabTestRequestController extends Controller
 
         return back()->with('success', 'Sample collected.');
     }
+
+    public function destroy(LabTestRequest $lab_request)
+    {
+        $lab_request->delete();
+
+        return redirect()->route('lab-requests.index')
+            ->with('success', 'Lab request deleted.');
+    }
 }

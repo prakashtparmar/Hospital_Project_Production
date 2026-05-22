@@ -34,6 +34,16 @@ class LabResultController extends Controller
 
     public function update(Request $request, LabTestRequest $lab_request)
     {
+        $lab_request->load('items.test.parameters');
+        $requestParameterIds = $lab_request->items
+            ->flatMap(fn ($item) => $item->test?->parameters ?? collect())
+            ->pluck('id')
+            ->values();
+
+        if ($requestParameterIds->isEmpty()) {
+            return back()->with('error', 'No test parameters found for this lab request.');
+        }
+
         $request->validate([
             'parameter_id' => 'required|array|min:1',
             'parameter_id.*' => 'exists:lab_test_parameters,id',
@@ -45,6 +55,10 @@ class LabResultController extends Controller
         $values = $request->input('value', []);
 
         foreach ($parameterIds as $i => $pid) {
+            if (!$requestParameterIds->contains((int) $pid)) {
+                continue;
+            }
+
             LabTestResult::updateOrCreate(
                 [
                     'request_id' => $lab_request->id,
@@ -107,6 +121,13 @@ class LabResultController extends Controller
 
     public function pdf(LabTestRequest $lab_request)
     {
+        $lab_request->load([
+            'patient',
+            'doctor',
+            'items.test.parameters',
+            'results',
+        ]);
+
         $pdf = \PDF::loadView('admin.lab.results.pdf', compact('lab_request'));
         return $pdf->download('lab-report-' . $lab_request->id . '.pdf');
     }

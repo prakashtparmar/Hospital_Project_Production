@@ -280,8 +280,8 @@
 
                   <a href="#" class="dropdown-toggle">
                     <i class="menu-icon fa fa-flask"></i>
-              <spa      n class="menu-text"> Lab </span>
-                <b class    ="arrow fa fa-angle-down"></b>
+              <span class="menu-text"> Lab </span>
+                <b class="arrow fa fa-angle-down"></b>
               </a>
 
         <ul         class="submenu">

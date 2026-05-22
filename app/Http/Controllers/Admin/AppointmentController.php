@@ -63,6 +63,13 @@ class AppointmentController extends Controller
             'appointment_time' => 'required',
             'department_id'    => 'nullable|exists:departments,id',
             'reason'           => 'nullable|string',
+            'status'           => 'nullable|in:Pending,CheckedIn,InConsultation,Completed,Cancelled',
+            'visit_type'       => 'nullable|string|max:50',
+            'appointment_type' => 'nullable|string|max:50',
+            'chief_complaint'  => 'nullable|string',
+            'referral'         => 'nullable|string|max:255',
+            'priority'         => 'nullable|string|max:50',
+            'notes'            => 'nullable|string',
         ]);
 
         $day = Carbon::parse($request->appointment_date)->format('l');
@@ -112,8 +119,14 @@ class AppointmentController extends Controller
             'appointment_date' => Carbon::parse($request->appointment_date)->format('Y-m-d'),
             'appointment_time' => $slot,
             'token_no'         => $token,
-            'reason'           => $request->reason,
-            'status'           => 'Pending',
+            'reason'           => $request->reason ?: $request->chief_complaint,
+            'status'           => $request->status ?: 'Pending',
+            'visit_type'       => $request->visit_type,
+            'appointment_type' => $request->appointment_type,
+            'chief_complaint'  => $request->chief_complaint,
+            'referral'         => $request->referral,
+            'priority'         => $request->priority,
+            'notes'            => $request->notes,
         ]);
 
         return redirect()->route('appointments.index')
@@ -122,6 +135,8 @@ class AppointmentController extends Controller
 
     public function show(Appointment $appointment)
     {
+        $appointment->load(['patient', 'doctor.doctorProfile', 'department']);
+
         return view('admin.appointments.show', compact('appointment'));
     }
 
@@ -146,6 +161,12 @@ class AppointmentController extends Controller
             'department_id'    => 'nullable|exists:departments,id',
             'status'           => 'required|in:Pending,CheckedIn,InConsultation,Completed,Cancelled',
             'reason'           => 'nullable|string',
+            'visit_type'       => 'nullable|string|max:50',
+            'appointment_type' => 'nullable|string|max:50',
+            'chief_complaint'  => 'nullable|string',
+            'referral'         => 'nullable|string|max:255',
+            'priority'         => 'nullable|string|max:50',
+            'notes'            => 'nullable|string',
         ]);
 
         $slot = Carbon::parse($request->appointment_time)->format('H:i:s');
@@ -156,8 +177,14 @@ class AppointmentController extends Controller
             'department_id'    => $request->department_id,
             'appointment_date' => Carbon::parse($request->appointment_date)->format('Y-m-d'),
             'appointment_time' => $slot,
-            'reason'           => $request->reason,
+            'reason'           => $request->reason ?: $request->chief_complaint,
             'status'           => $request->status,
+            'visit_type'       => $request->visit_type,
+            'appointment_type' => $request->appointment_type,
+            'chief_complaint'  => $request->chief_complaint,
+            'referral'         => $request->referral,
+            'priority'         => $request->priority,
+            'notes'            => $request->notes,
         ]);
 
         /* Keep Consultation synced */

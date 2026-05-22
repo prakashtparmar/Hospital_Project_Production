@@ -33,6 +33,10 @@ class LabTestCategoryController extends Controller
 
     public function update(Request $request, LabTestCategory $lab_test_category)
     {
+        $request->validate([
+            'name' => 'required|unique:lab_test_categories,name,' . $lab_test_category->id,
+        ]);
+
         $lab_test_category->update($request->all());
         return redirect()->route('lab-test-categories.index')->with('success','Updated.');
     }

@@ -15,6 +15,32 @@
 
 @section('content')
 
+<link rel="stylesheet" href="{{ asset('ace/assets/css/select2.min.css') }}">
+
+<style>
+    #prescriptionTable .medicine-select {
+        width: 240px;
+    }
+
+    #prescriptionTable .select2-container {
+        width: 100% !important;
+    }
+
+    #prescriptionTable .select2-selection--single {
+        min-height: 34px;
+        border-color: #d5d5d5;
+        border-radius: 0;
+    }
+
+    #prescriptionTable .select2-selection__rendered {
+        line-height: 32px;
+    }
+
+    #prescriptionTable .select2-selection__arrow {
+        height: 32px;
+    }
+</style>
+
 <div class="page-header">
     <h1><i class="fa fa-stethoscope"></i> New Consultation</h1>
 </div>
@@ -200,7 +226,22 @@
 
                     <tbody>
                         <tr>
-                            @foreach(['drug_name','strength','dose','route','frequency','duration','instructions'] as $f)
+                            <td>
+                                <select name="drug_name[]" class="form-control medicine-select">
+                                    <option value="">Search & select medicine</option>
+                                    @foreach($medicines as $medicine)
+                                        <option value="{{ $medicine->name }}">
+                                            {{ $medicine->name }}
+                                            @if($medicine->strength)
+                                                - {{ $medicine->strength }}
+                                            @endif
+                                            (Stock: {{ $medicine->current_stock }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </td>
+
+                            @foreach(['strength','dose','route','frequency','duration','instructions'] as $f)
                                 <td><input name="{{ $f }}[]" class="form-control"></td>
                             @endforeach
 
@@ -213,6 +254,21 @@
                     </tbody>
 
                 </table>
+
+                <template id="medicineSelectTemplate">
+                    <select name="drug_name[]" class="form-control medicine-select">
+                        <option value="">Search & select medicine</option>
+                        @foreach($medicines as $medicine)
+                            <option value="{{ $medicine->name }}">
+                                {{ $medicine->name }}
+                                @if($medicine->strength)
+                                    - {{ $medicine->strength }}
+                                @endif
+                                (Stock: {{ $medicine->current_stock }})
+                            </option>
+                        @endforeach
+                    </select>
+                </template>
 
             </div>
 
@@ -241,13 +297,28 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('ace/assets/js/select2.min.js') }}"></script>
+
 <script>
 $(function(){
+    function medicineSelectHtml(){
+        return $('#medicineSelectTemplate').html();
+    }
+
+    function initMedicineSelect(selector){
+        $(selector).select2({
+            placeholder: 'Search & select medicine',
+            allowClear: true,
+            width: 'resolve'
+        });
+    }
+
+    initMedicineSelect('.medicine-select');
 
     $('#addRow').on('click', function(){
         $('#prescriptionTable tbody').append(`
             <tr>
-                <td><input name="drug_name[]" class="form-control"></td>
+                <td>${medicineSelectHtml()}</td>
                 <td><input name="strength[]" class="form-control"></td>
                 <td><input name="dose[]" class="form-control"></td>
                 <td><input name="route[]" class="form-control"></td>
@@ -258,6 +329,8 @@ $(function(){
                         <i class="fa fa-trash"></i></button></td>
             </tr>
         `);
+
+        initMedicineSelect('#prescriptionTable tbody tr:last .medicine-select');
     });
 
     $(document).on('click','.removeRow',function(){

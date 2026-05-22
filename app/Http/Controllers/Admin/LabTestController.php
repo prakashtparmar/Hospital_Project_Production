@@ -37,7 +37,7 @@ class LabTestController extends Controller
             'name' => $request->name,
             'method' => $request->method,
             'price' => $request->price ?? 0,
-            'status' => $request->has('status') ? 1 : 0,
+            'status' => (int) $request->input('status', 0) === 1 ? 1 : 0,
         ]);
 
         return redirect()->route('lab-tests.index')->with('success','Test added.');
@@ -66,9 +66,16 @@ class LabTestController extends Controller
             'name' => $request->name,
             'method' => $request->method,
             'price' => $request->price ?? 0,
-            'status' => $request->has('status') ? 1 : 0,
+            'status' => (int) $request->input('status', 0) === 1 ? 1 : 0,
         ]);
 
         return redirect()->route('lab-tests.index')->with('success','Updated.');
+    }
+
+    public function destroy(LabTest $lab_test)
+    {
+        $lab_test->delete();
+
+        return redirect()->route('lab-tests.index')->with('success', 'Test deleted.');
     }
 }
