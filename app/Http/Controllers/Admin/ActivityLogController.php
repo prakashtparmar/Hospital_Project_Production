@@ -7,6 +7,11 @@ use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:auditlogs.view')->only(['index']);
+    }
+
     public function index()
     {
         // Fetch all logs with subject and causer details

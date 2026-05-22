@@ -23,14 +23,8 @@
         <div class="navbar-buttons navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
 
-                {{-- Tasks Dropdown --}}
-                @include('layouts.navbar_tasks')
-
                 {{-- Notifications Dropdown --}}
                 @include('layouts.navbar_notifications')
-
-                {{-- Messages Dropdown --}}
-                @include('layouts.navbar_messages')
 
                 {{-- User Dropdown --}}
                 @include('layouts.navbar_user')

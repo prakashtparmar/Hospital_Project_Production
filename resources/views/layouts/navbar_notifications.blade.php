@@ -1,64 +1,88 @@
-<li class="purple dropdown-modal">
-    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-        <i class="ace-icon fa fa-bell icon-animated-bell"></i>
-        <span class="badge badge-important">8</span>
-    </a>
+@can('auditlogs.view')
+    @php
+        $activityLogs = $navbarActivityLogs ?? collect();
+        $activityCount = $navbarActivityLogCount ?? $activityLogs->count();
 
-    <ul class="dropdown-menu-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
-        <li class="dropdown-header">
-            <i class="ace-icon fa fa-exclamation-triangle"></i>
-            8 Notifications
-        </li>
+        $activityIcon = function ($description) {
+            $text = strtolower($description ?? '');
 
-        <li class="dropdown-content">
-            <ul class="dropdown-menu dropdown-navbar navbar-pink">
-                <li>
-                    <a href="#">
-                        <div class="clearfix">
-                            <span class="pull-left">
-                                <i class="btn btn-xs no-hover btn-pink fa fa-comment"></i>
-                                New Comments
-                            </span>
-                            <span class="pull-right badge badge-info">+12</span>
-                        </div>
-                    </a>
-                </li>
+            if (str_contains($text, 'login')) {
+                return ['fa-sign-in', 'btn-success'];
+            }
 
-                <li>
-                    <a href="#">
-                        <i class="btn btn-xs btn-primary fa fa-user"></i>
-                        New Registration
-                    </a>
-                </li>
+            if (str_contains($text, 'logout')) {
+                return ['fa-sign-out', 'btn-grey'];
+            }
 
-                <li>
-                    <a href="#">
-                        <div class="clearfix">
-                            <span class="pull-left">
-                                <i class="btn btn-xs no-hover btn-success fa fa-shopping-cart"></i>
-                                New Orders
-                            </span>
-                            <span class="pull-right badge badge-success">+8</span>
-                        </div>
-                    </a>
-                </li>
+            if (str_contains($text, 'delete')) {
+                return ['fa-trash-o', 'btn-danger'];
+            }
 
-                <li>
-                    <a href="#">
-                        <div class="clearfix">
-                            <span class="pull-left">
-                                <i class="btn btn-xs no-hover btn-info fa fa-twitter"></i>
-                                Followers
-                            </span>
-                            <span class="pull-right badge badge-info">+11</span>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            if (str_contains($text, 'update') || str_contains($text, 'edit')) {
+                return ['fa-pencil', 'btn-warning'];
+            }
 
-        <li class="dropdown-footer">
-            <a href="#">See all notifications <i class="ace-icon fa fa-arrow-right"></i></a>
-        </li>
-    </ul>
-</li>
+            if (str_contains($text, 'create') || str_contains($text, 'added')) {
+                return ['fa-plus', 'btn-info'];
+            }
+
+            return ['fa-history', 'btn-primary'];
+        };
+    @endphp
+
+    <li class="purple dropdown-modal">
+        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+            <i class="ace-icon fa fa-bell icon-animated-bell"></i>
+            @if($activityCount > 0)
+                <span class="badge badge-important">{{ $activityCount > 99 ? '99+' : $activityCount }}</span>
+            @endif
+        </a>
+
+        <ul class="dropdown-menu-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
+            <li class="dropdown-header">
+                <i class="ace-icon fa fa-history"></i>
+                {{ $activityCount }} Recent {{ \Illuminate\Support\Str::plural('Activity', $activityCount) }}
+            </li>
+
+            <li class="dropdown-content">
+                <ul class="dropdown-menu dropdown-navbar navbar-pink">
+                    @forelse($activityLogs as $log)
+                        @php
+                            [$icon, $buttonClass] = $activityIcon($log->description);
+                        @endphp
+                        <li>
+                            <a href="{{ route('activity.logs') }}">
+                                <div class="clearfix">
+                                    <span class="pull-left">
+                                        <i class="btn btn-xs no-hover {{ $buttonClass }} fa {{ $icon }}"></i>
+                                        {{ \Illuminate\Support\Str::limit($log->description ?: 'Activity recorded', 34) }}
+                                    </span>
+                                </div>
+                                <span class="msg-time">
+                                    <i class="ace-icon fa fa-user"></i>
+                                    <span>{{ $log->causer?->name ?? 'System' }}</span>
+                                    <i class="ace-icon fa fa-clock-o"></i>
+                                    <span>{{ optional($log->created_at)->diffForHumans() }}</span>
+                                </span>
+                            </a>
+                        </li>
+                    @empty
+                        <li>
+                            <a href="{{ route('activity.logs') }}">
+                                <i class="btn btn-xs no-hover btn-default fa fa-info-circle"></i>
+                                No recent activity logs
+                            </a>
+                        </li>
+                    @endforelse
+                </ul>
+            </li>
+
+            <li class="dropdown-footer">
+                <a href="{{ route('activity.logs') }}">
+                    See all activity logs
+                    <i class="ace-icon fa fa-arrow-right"></i>
+                </a>
+            </li>
+        </ul>
+    </li>
+@endcan

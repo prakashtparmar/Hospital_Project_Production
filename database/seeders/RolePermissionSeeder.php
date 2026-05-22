@@ -23,6 +23,7 @@ class RolePermissionSeeder extends Seeder
             // Users & Roles
             'users.view','users.create','users.edit','users.delete',
             'roles.view','roles.create','roles.edit','roles.delete',
+            'auditlogs.view',
 
             // Departments
             'departments.view','departments.create','departments.edit','departments.delete',
@@ -128,6 +129,7 @@ class RolePermissionSeeder extends Seeder
         Role::findByName('Admin')->givePermissionTo([
             'dashboard.view',
             'users.view','users.create','users.edit',
+            'auditlogs.view',
             'departments.view','departments.create','departments.edit',
             'doctors.view','doctors.create','doctors.edit','doctors.delete',
             'lab-test-categories.view','lab-tests.view','lab-tests.create','lab-tests.edit',
