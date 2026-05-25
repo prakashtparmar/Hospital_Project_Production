@@ -23,7 +23,17 @@ class LoginController extends Controller
 
         $remember = $request->boolean('remember');
 
-        if (! Auth::attempt($request->only('email', 'password'), $remember)) {
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password,
+            'is_active' => 1
+        ];
+
+        if (! Auth::attempt($credentials, $remember)) {
+            $user = \App\Models\User::where('email', $request->email)->first();
+            if ($user && \Hash::check($request->password, $user->password) && $user->is_active == 0) {
+                return back()->withErrors(['email' => 'Your account is inactive. Please contact the administrator.']);
+            }
             return back()->withErrors(['email' => 'Invalid credentials']);
         }
 
