@@ -94,6 +94,7 @@
                 <th>Route</th>
                 <th>Frequency</th>
                 <th>Duration</th>
+                <th>Instructions</th>
             </tr>
             </thead>
 
@@ -106,6 +107,7 @@
                     <td>{{ $i->route }}</td>
                     <td>{{ $i->frequency }}</td>
                     <td>{{ $i->duration }}</td>
+                    <td>{{ $i->instructions }}</td>
                 </tr>
             @endforeach
             </tbody>
@@ -115,6 +117,9 @@
 
 @endif
 
+@if(!$loop->last)
+    <div style="page-break-after: always;"></div>
+@endif
 @endforeach
 
 </body>

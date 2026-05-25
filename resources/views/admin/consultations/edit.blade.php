@@ -192,12 +192,80 @@
                                         @endforeach
                                     </select>
                                 </td>
-                                <td><input name="strength[]" class="form-control" value="{{ $item->strength }}"></td>
-                                <td><input name="dose[]" class="form-control" value="{{ $item->dose }}"></td>
-                                <td><input name="route[]" class="form-control" value="{{ $item->route }}"></td>
-                                <td><input name="frequency[]" class="form-control" value="{{ $item->frequency }}"></td>
-                                <td><input name="duration[]" class="form-control" value="{{ $item->duration }}"></td>
-                                <td><input name="instructions[]" class="form-control" value="{{ $item->instructions }}"></td>
+                                <td>
+                                    <select name="strength[]" class="form-control">
+                                        <option value="{{ $item->strength }}" selected>{{ $item->strength }}</option>
+                                        <option value="5mg">5mg</option>
+                                        <option value="10mg">10mg</option>
+                                        <option value="20mg">20mg</option>
+                                        <option value="50mg">50mg</option>
+                                        <option value="100mg">100mg</option>
+                                        <option value="250mg">250mg</option>
+                                        <option value="500mg">500mg</option>
+                                        <option value="1g">1g</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="dose[]" class="form-control">
+                                        <option value="{{ $item->dose }}" selected>{{ $item->dose }}</option>
+                                        <option value="0.5 Tablet">0.5 Tablet</option>
+                                        <option value="1 Tablet">1 Tablet</option>
+                                        <option value="2 Tablets">2 Tablets</option>
+                                        <option value="1 Capsule">1 Capsule</option>
+                                        <option value="5 ml">5 ml</option>
+                                        <option value="10 ml">10 ml</option>
+                                        <option value="1 Drop">1 Drop</option>
+                                        <option value="2 Drops">2 Drops</option>
+                                        <option value="1 Puff">1 Puff</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="route[]" class="form-control">
+                                        <option value="{{ $item->route }}" selected>{{ $item->route }}</option>
+                                        <option value="Oral (PO)">Oral (PO)</option>
+                                        <option value="Intravenous (IV)">Intravenous (IV)</option>
+                                        <option value="Intramuscular (IM)">Intramuscular (IM)</option>
+                                        <option value="Subcutaneous (SC)">Subcutaneous (SC)</option>
+                                        <option value="Topical">Topical</option>
+                                        <option value="Eye Drops">Eye Drops</option>
+                                        <option value="Ear Drops">Ear Drops</option>
+                                        <option value="Inhalation">Inhalation</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="frequency[]" class="form-control">
+                                        <option value="{{ $item->frequency }}" selected>{{ $item->frequency }}</option>
+                                        <option value="1-0-1">1-0-1</option>
+                                        <option value="1-1-1">1-1-1</option>
+                                        <option value="1-0-0">1-0-0</option>
+                                        <option value="0-1-0">0-1-0</option>
+                                        <option value="0-0-1">0-0-1</option>
+                                        <option value="SOS (As needed)">SOS (As needed)</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="duration[]" class="form-control">
+                                        <option value="{{ $item->duration }}" selected>{{ $item->duration }}</option>
+                                        <option value="1 Day">1 Day</option>
+                                        <option value="2 Days">2 Days</option>
+                                        <option value="3 Days">3 Days</option>
+                                        <option value="5 Days">5 Days</option>
+                                        <option value="1 Week">1 Week</option>
+                                        <option value="2 Weeks">2 Weeks</option>
+                                        <option value="1 Month">1 Month</option>
+                                        <option value="Ongoing">Ongoing</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="instructions[]" class="form-control">
+                                        <option value="{{ $item->instructions }}" selected>{{ $item->instructions }}</option>
+                                        <option value="Before Food">Before Food</option>
+                                        <option value="After Food">After Food</option>
+                                        <option value="With Food">With Food</option>
+                                        <option value="Empty Stomach">Empty Stomach</option>
+                                        <option value="At Bedtime">At Bedtime</option>
+                                    </select>
+                                </td>
                                 <td><button type="button" class="btn btn-danger btn-xs btnRemoveRow"><i class="fa fa-trash"></i></button></td>
                             </tr>
                         @empty
@@ -216,28 +284,182 @@
                                         @endforeach
                                     </select>
                                 </td>
-                                @foreach(['strength','dose','route','frequency','duration','instructions'] as $f)
-                                    <td><input name="{{ $f }}[]" class="form-control"></td>
-                                @endforeach
+                                <td>
+                                    <select name="strength[]" class="form-control">
+                                        <option value=""></option>
+                                        <option value="5mg">5mg</option>
+                                        <option value="10mg">10mg</option>
+                                        <option value="20mg">20mg</option>
+                                        <option value="50mg">50mg</option>
+                                        <option value="100mg">100mg</option>
+                                        <option value="250mg">250mg</option>
+                                        <option value="500mg">500mg</option>
+                                        <option value="1g">1g</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="dose[]" class="form-control">
+                                        <option value=""></option>
+                                        <option value="0.5 Tablet">0.5 Tablet</option>
+                                        <option value="1 Tablet">1 Tablet</option>
+                                        <option value="2 Tablets">2 Tablets</option>
+                                        <option value="1 Capsule">1 Capsule</option>
+                                        <option value="5 ml">5 ml</option>
+                                        <option value="10 ml">10 ml</option>
+                                        <option value="1 Drop">1 Drop</option>
+                                        <option value="2 Drops">2 Drops</option>
+                                        <option value="1 Puff">1 Puff</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="route[]" class="form-control">
+                                        <option value=""></option>
+                                        <option value="Oral (PO)">Oral (PO)</option>
+                                        <option value="Intravenous (IV)">Intravenous (IV)</option>
+                                        <option value="Intramuscular (IM)">Intramuscular (IM)</option>
+                                        <option value="Subcutaneous (SC)">Subcutaneous (SC)</option>
+                                        <option value="Topical">Topical</option>
+                                        <option value="Eye Drops">Eye Drops</option>
+                                        <option value="Ear Drops">Ear Drops</option>
+                                        <option value="Inhalation">Inhalation</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="frequency[]" class="form-control">
+                                        <option value=""></option>
+                                        <option value="1-0-1">1-0-1</option>
+                                        <option value="1-1-1">1-1-1</option>
+                                        <option value="1-0-0">1-0-0</option>
+                                        <option value="0-1-0">0-1-0</option>
+                                        <option value="0-0-1">0-0-1</option>
+                                        <option value="SOS (As needed)">SOS (As needed)</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="duration[]" class="form-control">
+                                        <option value=""></option>
+                                        <option value="1 Day">1 Day</option>
+                                        <option value="2 Days">2 Days</option>
+                                        <option value="3 Days">3 Days</option>
+                                        <option value="5 Days">5 Days</option>
+                                        <option value="1 Week">1 Week</option>
+                                        <option value="2 Weeks">2 Weeks</option>
+                                        <option value="1 Month">1 Month</option>
+                                        <option value="Ongoing">Ongoing</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="instructions[]" class="form-control">
+                                        <option value=""></option>
+                                        <option value="Before Food">Before Food</option>
+                                        <option value="After Food">After Food</option>
+                                        <option value="With Food">With Food</option>
+                                        <option value="Empty Stomach">Empty Stomach</option>
+                                        <option value="At Bedtime">At Bedtime</option>
+                                    </select>
+                                </td>
                                 <td><button type="button" class="btn btn-danger btn-xs btnRemoveRow"><i class="fa fa-trash"></i></button></td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
 
-                <template id="medicineSelectTemplate">
-                    <select name="drug_name[]" class="form-control medicine-select">
-                        <option value="">Search & select medicine</option>
-                        @foreach($medicines as $medicine)
-                            <option value="{{ $medicine->name }}">
-                                {{ $medicine->name }}
-                                @if($medicine->strength)
-                                    - {{ $medicine->strength }}
-                                @endif
-                                (Stock: {{ $medicine->current_stock }})
-                            </option>
-                        @endforeach
-                    </select>
+                <template id="rowTemplate">
+                    <tr>
+                        <td>
+                            <select name="drug_name[]" class="form-control medicine-select">
+                                <option value="">Search & select medicine</option>
+                                @foreach($medicines as $medicine)
+                                    <option value="{{ $medicine->name }}">
+                                        {{ $medicine->name }}
+                                        @if($medicine->strength)
+                                            - {{ $medicine->strength }}
+                                        @endif
+                                        (Stock: {{ $medicine->current_stock }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td>
+                            <select name="strength[]" class="form-control">
+                                <option value=""></option>
+                                <option value="5mg">5mg</option>
+                                <option value="10mg">10mg</option>
+                                <option value="20mg">20mg</option>
+                                <option value="50mg">50mg</option>
+                                <option value="100mg">100mg</option>
+                                <option value="250mg">250mg</option>
+                                <option value="500mg">500mg</option>
+                                <option value="1g">1g</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="dose[]" class="form-control">
+                                <option value=""></option>
+                                <option value="0.5 Tablet">0.5 Tablet</option>
+                                <option value="1 Tablet">1 Tablet</option>
+                                <option value="2 Tablets">2 Tablets</option>
+                                <option value="1 Capsule">1 Capsule</option>
+                                <option value="5 ml">5 ml</option>
+                                <option value="10 ml">10 ml</option>
+                                <option value="1 Drop">1 Drop</option>
+                                <option value="2 Drops">2 Drops</option>
+                                <option value="1 Puff">1 Puff</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="route[]" class="form-control">
+                                <option value=""></option>
+                                <option value="Oral (PO)">Oral (PO)</option>
+                                <option value="Intravenous (IV)">Intravenous (IV)</option>
+                                <option value="Intramuscular (IM)">Intramuscular (IM)</option>
+                                <option value="Subcutaneous (SC)">Subcutaneous (SC)</option>
+                                <option value="Topical">Topical</option>
+                                <option value="Eye Drops">Eye Drops</option>
+                                <option value="Ear Drops">Ear Drops</option>
+                                <option value="Inhalation">Inhalation</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="frequency[]" class="form-control">
+                                <option value=""></option>
+                                <option value="1-0-1">1-0-1</option>
+                                <option value="1-1-1">1-1-1</option>
+                                <option value="1-0-0">1-0-0</option>
+                                <option value="0-1-0">0-1-0</option>
+                                <option value="0-0-1">0-0-1</option>
+                                <option value="SOS (As needed)">SOS (As needed)</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="duration[]" class="form-control">
+                                <option value=""></option>
+                                <option value="1 Day">1 Day</option>
+                                <option value="2 Days">2 Days</option>
+                                <option value="3 Days">3 Days</option>
+                                <option value="5 Days">5 Days</option>
+                                <option value="1 Week">1 Week</option>
+                                <option value="2 Weeks">2 Weeks</option>
+                                <option value="1 Month">1 Month</option>
+                                <option value="Ongoing">Ongoing</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="instructions[]" class="form-control">
+                                <option value=""></option>
+                                <option value="Before Food">Before Food</option>
+                                <option value="After Food">After Food</option>
+                                <option value="With Food">With Food</option>
+                                <option value="Empty Stomach">Empty Stomach</option>
+                                <option value="At Bedtime">At Bedtime</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-xs btnRemoveRow">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
                 </template>
 
             </div>
@@ -334,9 +556,6 @@
 <script>
 $(function(){
 
-    function medicineSelectHtml(){
-        return $('#medicineSelectTemplate').html();
-    }
 
     function initMedicineSelect(selector){
         $(selector).select2({
@@ -350,18 +569,7 @@ $(function(){
 
     // ADD ROW
     $('#btnAddRow').on('click', function(){
-        $('#prescription-table tbody').append(`
-            <tr>
-                <td>${medicineSelectHtml()}</td>
-                <td><input name="strength[]" class="form-control"></td>
-                <td><input name="dose[]" class="form-control"></td>
-                <td><input name="route[]" class="form-control"></td>
-                <td><input name="frequency[]" class="form-control"></td>
-                <td><input name="duration[]" class="form-control"></td>
-                <td><input name="instructions[]" class="form-control"></td>
-                <td><button type="button" class="btn btn-danger btn-xs btnRemoveRow"><i class="fa fa-trash"></i></button></td>
-            </tr>
-        `);
+        $('#prescription-table tbody').append($('#rowTemplate').html());
         initMedicineSelect('#prescription-table tbody tr:last .medicine-select');
     });
 
