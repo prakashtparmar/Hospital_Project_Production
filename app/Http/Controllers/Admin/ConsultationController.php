@@ -33,13 +33,27 @@ class ConsultationController extends Controller
             ->only(['deleteDocument','destroy']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $consultations = Consultation::with(['patient','doctor'])
-            ->orderBy('created_at','desc')
-            ->paginate(20);
+        $query = Consultation::with(['patient','doctor']);
 
-        return view('admin.consultations.index', compact('consultations'));
+        $filter = $request->has('date_filter') ? $request->date_filter : 'today';
+
+        if ($filter === 'today') {
+            $query->whereDate('created_at', Carbon::today());
+        } elseif ($filter === 'yesterday') {
+            $query->whereDate('created_at', Carbon::yesterday());
+        } elseif ($filter === 'this_month') {
+            $query->whereMonth('created_at', Carbon::now()->month)
+                  ->whereYear('created_at', Carbon::now()->year);
+        } elseif ($filter === 'this_year') {
+            $query->whereYear('created_at', Carbon::now()->year);
+        }
+
+        $consultations = $query->orderBy('created_at','desc')
+            ->paginate(20)->appends($request->all());
+
+        return view('admin.consultations.index', compact('consultations', 'filter'));
     }
 
     public function create(Request $request)
@@ -162,6 +176,10 @@ class ConsultationController extends Controller
         $patients = Patient::orderBy('first_name')->get();
         $doctors  = User::role('Doctor')->get();
 
+        $medicines = Medicine::where('status', 1)
+                        ->orderBy('name')
+                        ->get(['id','name','strength','current_stock']);
+
         $consultation->load(['prescriptions.items','documents']);
 
         $history = Consultation::with('doctor')
@@ -170,7 +188,7 @@ class ConsultationController extends Controller
             ->get();
 
         return view('admin.consultations.edit', compact(
-            'consultation','patients','doctors','history'
+            'consultation','patients','doctors','medicines','history'
         ));
     }
 

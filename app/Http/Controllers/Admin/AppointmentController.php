@@ -28,14 +28,28 @@ class AppointmentController extends Controller
             ->count() + 1;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $appointments = Appointment::with(['patient', 'doctor', 'department'])
-            ->orderBy('appointment_date', 'desc')
-            ->orderBy('appointment_time', 'asc')
-            ->paginate(15);
+        $query = Appointment::with(['patient', 'doctor', 'department']);
 
-        return view('admin.appointments.index', compact('appointments'));
+        $filter = $request->has('date_filter') ? $request->date_filter : 'today';
+
+        if ($filter === 'today') {
+            $query->whereDate('appointment_date', Carbon::today());
+        } elseif ($filter === 'yesterday') {
+            $query->whereDate('appointment_date', Carbon::yesterday());
+        } elseif ($filter === 'this_month') {
+            $query->whereMonth('appointment_date', Carbon::now()->month)
+                  ->whereYear('appointment_date', Carbon::now()->year);
+        } elseif ($filter === 'this_year') {
+            $query->whereYear('appointment_date', Carbon::now()->year);
+        }
+
+        $appointments = $query->orderBy('appointment_date', 'desc')
+            ->orderBy('appointment_time', 'asc')
+            ->paginate(15)->appends($request->all());
+
+        return view('admin.appointments.index', compact('appointments', 'filter'));
     }
 
     public function create(Request $request)

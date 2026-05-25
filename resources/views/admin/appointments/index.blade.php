@@ -30,7 +30,15 @@
                         <i class="fa fa-list"></i> Appointment List
                     </h5>
 
-                    <div class="widget-toolbar">
+                    <div class="widget-toolbar no-border">
+                        <form method="GET" action="{{ route('appointments.index') }}" style="display:inline-block; margin-right: 10px;">
+                            <select name="date_filter" onchange="this.form.submit()" class="form-control input-sm" style="display:inline-block; width:auto; padding-top: 2px; padding-bottom: 2px; height: 30px;">
+                                <option value="today" {{ $filter == 'today' ? 'selected' : '' }}>Today</option>
+                                <option value="yesterday" {{ $filter == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                                <option value="this_month" {{ $filter == 'this_month' ? 'selected' : '' }}>This Month</option>
+                                <option value="this_year" {{ $filter == 'this_year' ? 'selected' : '' }}>This Year</option>
+                            </select>
+                        </form>
                         @can('appointments.create')
                             <a href="{{ route('appointments.create') }}" class="btn btn-success btn-sm">
                                 <i class="fa fa-plus"></i> Book Appointment

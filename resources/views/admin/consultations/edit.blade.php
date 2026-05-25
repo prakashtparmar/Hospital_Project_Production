@@ -15,6 +15,32 @@
 
 @section('content')
 
+<link rel="stylesheet" href="{{ asset('ace/assets/css/select2.min.css') }}">
+
+<style>
+    #prescription-table .medicine-select {
+        width: 240px;
+    }
+
+    #prescription-table .select2-container {
+        width: 100% !important;
+    }
+
+    #prescription-table .select2-selection--single {
+        min-height: 34px;
+        border-color: #d5d5d5;
+        border-radius: 0;
+    }
+
+    #prescription-table .select2-selection__rendered {
+        line-height: 32px;
+    }
+
+    #prescription-table .select2-selection__arrow {
+        height: 32px;
+    }
+</style>
+
 <div class="page-header">
     <h1><i class="fa fa-pencil"></i> Edit Consultation #{{ $consultation->id }}</h1>
 </div>
@@ -69,18 +95,8 @@
                         @error('doctor_id') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
 
-                    {{-- STATUS --}}
-                    <div class="col-sm-4">
-                        <label>Status <span class="text-danger">*</span></label>
-                        <select name="status" id="statusSelect" class="form-control @error('status') is-invalid @enderror">
-                            @foreach(['in_progress', 'completed', 'cancelled'] as $st)
-                                <option value="{{ $st }}" @selected($consultation->status==$st)>
-                                    {{ ucfirst(str_replace('_',' ',$st)) }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('status') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
+                    {{-- STATUS FIELD REMOVED --}}
+                    {{-- System now forces status = completed --}}
 
                 </div>
             </div>
@@ -162,7 +178,20 @@
                     <tbody>
                         @forelse($consultation->prescriptions->first()->items ?? [] as $item)
                             <tr>
-                                <td><input name="drug_name[]" class="form-control" value="{{ $item->drug_name }}"></td>
+                                <td>
+                                    <select name="drug_name[]" class="form-control medicine-select">
+                                        <option value="">Search & select medicine</option>
+                                        @foreach($medicines as $medicine)
+                                            <option value="{{ $medicine->name }}" @if($item->drug_name == $medicine->name) selected @endif>
+                                                {{ $medicine->name }}
+                                                @if($medicine->strength)
+                                                    - {{ $medicine->strength }}
+                                                @endif
+                                                (Stock: {{ $medicine->current_stock }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
                                 <td><input name="strength[]" class="form-control" value="{{ $item->strength }}"></td>
                                 <td><input name="dose[]" class="form-control" value="{{ $item->dose }}"></td>
                                 <td><input name="route[]" class="form-control" value="{{ $item->route }}"></td>
@@ -173,7 +202,21 @@
                             </tr>
                         @empty
                             <tr>
-                                @foreach(['drug_name','strength','dose','route','frequency','duration','instructions'] as $f)
+                                <td>
+                                    <select name="drug_name[]" class="form-control medicine-select">
+                                        <option value="">Search & select medicine</option>
+                                        @foreach($medicines as $medicine)
+                                            <option value="{{ $medicine->name }}">
+                                                {{ $medicine->name }}
+                                                @if($medicine->strength)
+                                                    - {{ $medicine->strength }}
+                                                @endif
+                                                (Stock: {{ $medicine->current_stock }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                @foreach(['strength','dose','route','frequency','duration','instructions'] as $f)
                                     <td><input name="{{ $f }}[]" class="form-control"></td>
                                 @endforeach
                                 <td><button type="button" class="btn btn-danger btn-xs btnRemoveRow"><i class="fa fa-trash"></i></button></td>
@@ -181,6 +224,21 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                <template id="medicineSelectTemplate">
+                    <select name="drug_name[]" class="form-control medicine-select">
+                        <option value="">Search & select medicine</option>
+                        @foreach($medicines as $medicine)
+                            <option value="{{ $medicine->name }}">
+                                {{ $medicine->name }}
+                                @if($medicine->strength)
+                                    - {{ $medicine->strength }}
+                                @endif
+                                (Stock: {{ $medicine->current_stock }})
+                            </option>
+                        @endforeach
+                    </select>
+                </template>
 
             </div>
 
@@ -272,14 +330,29 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('ace/assets/js/select2.min.js') }}"></script>
 <script>
 $(function(){
+
+    function medicineSelectHtml(){
+        return $('#medicineSelectTemplate').html();
+    }
+
+    function initMedicineSelect(selector){
+        $(selector).select2({
+            placeholder: 'Search & select medicine',
+            allowClear: true,
+            width: 'resolve'
+        });
+    }
+
+    initMedicineSelect('.medicine-select');
 
     // ADD ROW
     $('#btnAddRow').on('click', function(){
         $('#prescription-table tbody').append(`
             <tr>
-                <td><input name="drug_name[]" class="form-control"></td>
+                <td>${medicineSelectHtml()}</td>
                 <td><input name="strength[]" class="form-control"></td>
                 <td><input name="dose[]" class="form-control"></td>
                 <td><input name="route[]" class="form-control"></td>
@@ -289,6 +362,7 @@ $(function(){
                 <td><button type="button" class="btn btn-danger btn-xs btnRemoveRow"><i class="fa fa-trash"></i></button></td>
             </tr>
         `);
+        initMedicineSelect('#prescription-table tbody tr:last .medicine-select');
     });
 
     // REMOVE ROW

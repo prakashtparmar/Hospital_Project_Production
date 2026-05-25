@@ -28,6 +28,16 @@
         <div class="widget-box">
             <div class="widget-header">
                 <h4 class="widget-title">Consultation Records</h4>
+                <div class="widget-toolbar no-border">
+                    <form method="GET" action="{{ route('consultations.index') }}" style="display:inline-block;">
+                        <select name="date_filter" onchange="this.form.submit()" class="form-control input-sm" style="display:inline-block; width:auto; padding-top: 2px; padding-bottom: 2px; height: 30px;">
+                            <option value="today" {{ $filter == 'today' ? 'selected' : '' }}>Today</option>
+                            <option value="yesterday" {{ $filter == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                            <option value="this_month" {{ $filter == 'this_month' ? 'selected' : '' }}>This Month</option>
+                            <option value="this_year" {{ $filter == 'this_year' ? 'selected' : '' }}>This Year</option>
+                        </select>
+                    </form>
+                </div>
             </div>
 
             <div class="widget-body">
