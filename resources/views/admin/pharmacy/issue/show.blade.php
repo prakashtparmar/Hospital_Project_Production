@@ -231,7 +231,6 @@
                 <tr>
                     <th style="width: 50px;">#</th>
                     <th>Medicine</th>
-                    <th>Strength</th>
                     <th class="text-center" style="width: 90px;">Qty</th>
                     <th class="text-right" style="width: 120px;">Rate</th>
                     <th class="text-right" style="width: 140px;">Amount</th>
@@ -247,14 +246,13 @@
                                 <br><small class="text-muted">SKU: {{ $item->medicine->sku }}</small>
                             @endif
                         </td>
-                        <td>{{ $item->medicine?->strength ?? '-' }}</td>
                         <td class="text-center">{{ $item->quantity }}</td>
                         <td class="text-right">₹{{ number_format($item->rate, 2) }}</td>
                         <td class="text-right"><strong>₹{{ number_format($item->amount, 2) }}</strong></td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted">No medicines found for this invoice.</td>
+                        <td colspan="5" class="text-center text-muted">No medicines found for this invoice.</td>
                     </tr>
                 @endforelse
             </tbody>

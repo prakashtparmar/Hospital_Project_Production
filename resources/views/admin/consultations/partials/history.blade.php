@@ -97,7 +97,6 @@
                                         <thead>
                                             <tr>
                                                 <th>Drug</th>
-                                                <th>Strength</th>
                                                 <th>Dose</th>
                                                 <th>Route</th>
                                                 <th>Frequency</th>
@@ -110,7 +109,6 @@
                                             @foreach($pr->items as $it)
                                                 <tr>
                                                     <td>{{ $it->drug_name }}</td>
-                                                    <td>{{ $it->strength }}</td>
                                                     <td>{{ $it->dose }}</td>
                                                     <td>{{ $it->route }}</td>
                                                     <td>{{ $it->frequency }}</td>

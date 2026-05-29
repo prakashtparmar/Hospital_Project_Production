@@ -157,11 +157,15 @@
 
                 <br>
 
+                <p class="text-muted" style="font-size:12px; margin-bottom:6px;">
+                    <i class="fa fa-info-circle"></i>
+                    If a medicine is not found in the list, type the name and press <kbd>Enter</kbd> to add it directly.
+                </p>
+
                 <table class="table table-bordered" id="prescription-table">
                     <thead>
                         <tr>
                             <th>Drug</th>
-                            <th>Strength</th>
                             <th>Dose</th>
                             <th>Route</th>
                             <th>Frequency</th>
@@ -179,30 +183,14 @@
                         @forelse($consultation->prescriptions->first()->items ?? [] as $item)
                             <tr>
                                 <td>
-                                    <select name="drug_name[]" class="form-control medicine-select">
+                                    <input type="hidden" name="strength[]" value="{{ $item->strength }}">
+                                    <select name="drug_name[]" class="form-control medicine-select" data-tags="true">
                                         <option value="">Search & select medicine</option>
                                         @foreach($medicines as $medicine)
                                             <option value="{{ $medicine->name }}" @if($item->drug_name == $medicine->name) selected @endif>
-                                                {{ $medicine->name }}
-                                                @if($medicine->strength)
-                                                    - {{ $medicine->strength }}
-                                                @endif
-                                                (Stock: {{ $medicine->current_stock }})
+                                                {{ $medicine->name }} (Stock: {{ $medicine->current_stock }})
                                             </option>
                                         @endforeach
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="strength[]" class="form-control">
-                                        <option value="{{ $item->strength }}" selected>{{ $item->strength }}</option>
-                                        <option value="5mg">5mg</option>
-                                        <option value="10mg">10mg</option>
-                                        <option value="20mg">20mg</option>
-                                        <option value="50mg">50mg</option>
-                                        <option value="100mg">100mg</option>
-                                        <option value="250mg">250mg</option>
-                                        <option value="500mg">500mg</option>
-                                        <option value="1g">1g</option>
                                     </select>
                                 </td>
                                 <td>
@@ -367,30 +355,15 @@
                 <template id="rowTemplate">
                     <tr>
                         <td>
+                            <input type="hidden" name="strength[]" value="">
                             <select name="drug_name[]" class="form-control medicine-select">
                                 <option value="">Search & select medicine</option>
                                 @foreach($medicines as $medicine)
                                     <option value="{{ $medicine->name }}">
                                         {{ $medicine->name }}
-                                        @if($medicine->strength)
-                                            - {{ $medicine->strength }}
-                                        @endif
                                         (Stock: {{ $medicine->current_stock }})
                                     </option>
                                 @endforeach
-                            </select>
-                        </td>
-                        <td>
-                            <select name="strength[]" class="form-control">
-                                <option value=""></option>
-                                <option value="5mg">5mg</option>
-                                <option value="10mg">10mg</option>
-                                <option value="20mg">20mg</option>
-                                <option value="50mg">50mg</option>
-                                <option value="100mg">100mg</option>
-                                <option value="250mg">250mg</option>
-                                <option value="500mg">500mg</option>
-                                <option value="1g">1g</option>
                             </select>
                         </td>
                         <td>
@@ -561,7 +534,19 @@ $(function(){
         $(selector).select2({
             placeholder: 'Search & select medicine',
             allowClear: true,
-            width: 'resolve'
+            width: 'resolve',
+            tags: true,
+            createTag: function(params) {
+                var term = $.trim(params.term);
+                if (term === '') return null;
+                return { id: term, text: term + ' (Add new)', newTag: true };
+            },
+            templateResult: function(data) {
+                if (data.newTag) {
+                    return $('<span style="color:#27ae60;font-style:italic;"><i class="fa fa-plus-circle"></i> ' + data.text + '</span>');
+                }
+                return data.text;
+            }
         });
     }
 

@@ -39,6 +39,12 @@
     #prescriptionTable .select2-selection__arrow {
         height: 32px;
     }
+
+    /* Style for "Add new medicine" tag option */
+    .select2-results__option--new-medicine {
+        color: #27ae60;
+        font-style: italic;
+    }
 </style>
 
 <div class="page-header">
@@ -206,11 +212,17 @@
 
                 <br>
 
+                {{-- Helper tip for adding new medicines --}}
+                <p class="text-muted" style="font-size:12px; margin-bottom:6px;">
+                    <i class="fa fa-info-circle"></i>
+                    If a medicine is not found in the list, type the name and press <kbd>Enter</kbd> to add it directly.
+                </p>
+
                 <table class="table table-bordered" id="prescriptionTable">
                     <thead>
                         <tr>
                             <th>Drug</th>
-                            <th>Strength</th>
+                            {{-- Strength column removed --}}
                             <th>Dose</th>
                             <th>Route</th>
                             <th>Frequency</th>
@@ -227,33 +239,19 @@
                     <tbody>
                         <tr>
                             <td>
+                                {{-- strength[] hidden keeps controller array-index alignment --}}
+                                <input type="hidden" name="strength[]" value="">
                                 <select name="drug_name[]" class="form-control medicine-select">
-                                    <option value="">Search & select medicine</option>
+                                    <option value="">Search &amp; select medicine</option>
                                     @foreach($medicines as $medicine)
                                         <option value="{{ $medicine->name }}">
                                             {{ $medicine->name }}
-                                            @if($medicine->strength)
-                                                - {{ $medicine->strength }}
-                                            @endif
                                             (Stock: {{ $medicine->current_stock }})
                                         </option>
                                     @endforeach
                                 </select>
                             </td>
 
-                            <td>
-                                <select name="strength[]" class="form-control">
-                                    <option value=""></option>
-                                    <option value="5mg">5mg</option>
-                                    <option value="10mg">10mg</option>
-                                    <option value="20mg">20mg</option>
-                                    <option value="50mg">50mg</option>
-                                    <option value="100mg">100mg</option>
-                                    <option value="250mg">250mg</option>
-                                    <option value="500mg">500mg</option>
-                                    <option value="1g">1g</option>
-                                </select>
-                            </td>
                             <td>
                                 <select name="dose[]" class="form-control">
                                     <option value=""></option>
@@ -329,30 +327,15 @@
                 <template id="rowTemplate">
                     <tr>
                         <td>
+                            <input type="hidden" name="strength[]" value="">
                             <select name="drug_name[]" class="form-control medicine-select">
-                                <option value="">Search & select medicine</option>
+                                <option value="">Search &amp; select medicine</option>
                                 @foreach($medicines as $medicine)
                                     <option value="{{ $medicine->name }}">
                                         {{ $medicine->name }}
-                                        @if($medicine->strength)
-                                            - {{ $medicine->strength }}
-                                        @endif
                                         (Stock: {{ $medicine->current_stock }})
                                     </option>
                                 @endforeach
-                            </select>
-                        </td>
-                        <td>
-                            <select name="strength[]" class="form-control">
-                                <option value=""></option>
-                                <option value="5mg">5mg</option>
-                                <option value="10mg">10mg</option>
-                                <option value="20mg">20mg</option>
-                                <option value="50mg">50mg</option>
-                                <option value="100mg">100mg</option>
-                                <option value="250mg">250mg</option>
-                                <option value="500mg">500mg</option>
-                                <option value="1g">1g</option>
                             </select>
                         </td>
                         <td>
@@ -456,11 +439,37 @@
 <script>
 $(function(){
 
+    /**
+     * Initialize Select2 on medicine dropdowns.
+     * tags: true  → allows the user to type a free-text name when the
+     *               medicine is not found in the list and press Enter to add it.
+     * createTag   → formats the new-entry label to make it obvious.
+     * The submitted value is just the typed string, which the controller
+     * already stores as drug_name (string). No backend changes needed.
+     */
     function initMedicineSelect(selector){
         $(selector).select2({
             placeholder: 'Search & select medicine',
             allowClear: true,
-            width: 'resolve'
+            width: 'resolve',
+            tags: true,
+            createTag: function(params) {
+                var term = $.trim(params.term);
+                if (term === '') return null;
+                return {
+                    id:   term,
+                    text: term + ' (Add new)',
+                    newTag: true
+                };
+            },
+            templateResult: function(data) {
+                if (data.newTag) {
+                    return $('<span style="color:#27ae60;font-style:italic;">' +
+                             '<i class="fa fa-plus-circle"></i> ' + data.text +
+                             '</span>');
+                }
+                return data.text;
+            }
         });
     }
 
@@ -468,11 +477,10 @@ $(function(){
 
     $('#addRow').on('click', function(){
         $('#prescriptionTable tbody').append($('#rowTemplate').html());
-
         initMedicineSelect('#prescriptionTable tbody tr:last .medicine-select');
     });
 
-    $(document).on('click','.removeRow',function(){
+    $(document).on('click', '.removeRow', function(){
         if($('#prescriptionTable tbody tr').length > 1){
             $(this).closest('tr').remove();
         }
